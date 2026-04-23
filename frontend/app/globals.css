@@ -1,0 +1,86 @@
+@import "tailwindcss";
+
+/**
+ * Aegis Color System - Dark & Light Themes
+ */
+
+/* Dark Theme (default) */
+:root,
+[data-theme="dark"] {
+  --bg-app: #0a0d12;
+  --bg-card: #141b26;
+  --bg-input: #1e293b;
+  --bg-hover: #1e293b;
+
+  --border-subtle: #2d3748;
+
+  --accent-primary: #bfff00;
+  --accent-primary-hover: #f5ff8a;
+  --accent-secondary: #00d9ff;
+
+  --text-primary: #e8ecf1;
+  --text-secondary: #8b92a1;
+  --text-disabled: #4a5568;
+
+  --status-healthy: #10e37d;
+  --status-warning: #ff9500;
+  --status-critical: #ff5757;
+
+  --shadow-glow: rgba(191, 255, 0, 0.3);
+  --shadow-card: rgba(0, 0, 0, 0.4);
+  --overlay: rgba(10, 13, 18, 0.95);
+
+  /* Text on accent (dark text on bright accent) */
+  --text-on-accent: #0a0d12;
+
+  /* Legacy support */
+  --background: #0a0d12;
+  --foreground: #e8ecf1;
+}
+
+/* Light Theme */
+[data-theme="light"] {
+  --bg-app: #f4f6f9;
+  --bg-card: #ffffff;
+  --bg-input: #e8ecf1;
+  --bg-hover: #dde3eb;
+
+  --border-subtle: #c9d1dc;
+
+  --accent-primary: #4d7a00;
+  --accent-primary-hover: #3d6100;
+  --accent-secondary: #0078a8;
+
+  --text-primary: #0f1419;
+  --text-secondary: #4a5568;
+  --text-disabled: #a0aec0;
+
+  --status-healthy: #059669;
+  --status-warning: #d97706;
+  --status-critical: #dc2626;
+
+  --shadow-glow: rgba(77, 122, 0, 0.2);
+  --shadow-card: rgba(0, 0, 0, 0.08);
+  --overlay: rgba(244, 246, 249, 0.95);
+
+  --text-on-accent: #ffffff;
+
+  --background: #f4f6f9;
+  --foreground: #0f1419;
+}
+
+@theme inline {
+  --color-background: var(--bg-app);
+  --color-foreground: var(--text-primary);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+body {
+  background: var(--bg-app);
+  color: var(--text-primary);
+  font-family: Arial, Helvetica, sans-serif;
+  margin: 0;
+  padding: 0;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}

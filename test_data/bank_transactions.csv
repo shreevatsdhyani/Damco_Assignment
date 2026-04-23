@@ -1,0 +1,40 @@
+date,transaction_id,description,amount,category,account_balance
+2024-01-03,TXN-1001,Google Workspace Subscription,-450,Software,298500
+2024-01-05,TXN-1002,AWS Cloud Services,-14000,Software,284500
+2024-01-08,TXN-1003,Stripe Payout,62000,Revenue,346500
+2024-01-10,TXN-1004,Gusto Payroll Run,-87000,Payroll,259500
+2024-01-12,TXN-1005,HubSpot CRM,-1200,Software,258300
+2024-01-15,TXN-1006,Office Rent,-8500,Office,249800
+2024-01-18,TXN-1007,AWS Cloud Services,-14000,Software,235800
+2024-01-20,TXN-1008,Facebook Ads,-5500,Marketing,230300
+2024-01-22,TXN-1009,Stripe Payout,65000,Revenue,295300
+2024-01-25,TXN-1010,Zoom Pro,-200,Software,295100
+2024-01-28,TXN-1011,Google Ads,-3800,Marketing,291300
+2024-02-02,TXN-1012,AWS Cloud Services,-14200,Software,277100
+2024-02-05,TXN-1013,Stripe Payout,68000,Revenue,345100
+2024-02-08,TXN-1014,Gusto Payroll Run,-87000,Payroll,258100
+2024-02-10,TXN-1015,Slack Business,-350,Software,257750
+2024-02-12,TXN-1016,Office Rent,-8500,Office,249250
+2024-02-15,TXN-1017,LinkedIn Ads,-4200,Marketing,245050
+2024-02-18,TXN-1018,Stripe Payout,71000,Revenue,316050
+2024-02-20,TXN-1019,Figma Team,-450,Software,315600
+2024-02-22,TXN-1020,Notion Business,-300,Software,315300
+2024-03-03,TXN-1021,AWS Cloud Services,-14000,Software,301300
+2024-03-05,TXN-1022,Stripe Payout,74000,Revenue,375300
+2024-03-08,TXN-1023,Gusto Payroll Run,-89000,Payroll,286300
+2024-03-10,TXN-1024,HubSpot CRM,-1200,Software,285100
+2024-03-12,TXN-1025,Office Rent,-8500,Office,276600
+2024-03-15,TXN-1026,Google Ads,-6200,Marketing,270400
+2024-03-18,TXN-1027,Stripe Payout,78000,Revenue,348400
+2024-03-20,TXN-1028,DataDog Monitoring,-2800,Software,345600
+2024-03-22,TXN-1029,AWS Cloud Services,-14000,Software,331600
+2024-03-25,TXN-1030,Twitter/X Ads,-1800,Marketing,329800
+2024-04-02,TXN-1031,Stripe Payout,81000,Revenue,410800
+2024-04-05,TXN-1032,Gusto Payroll Run,-89000,Payroll,321800
+2024-04-08,TXN-1033,AWS Cloud Services,-14200,Software,307600
+2024-04-10,TXN-1034,Office Rent,-8500,Office,299100
+2024-04-15,TXN-1035,Stripe Payout,85000,Revenue,384100
+2024-04-18,TXN-1036,Facebook Ads,-7000,Marketing,377100
+2024-04-20,TXN-1037,Intercom Support,-950,Software,376150
+2024-04-22,TXN-1038,Google Workspace Subscription,-450,Software,375700
+2024-04-25,TXN-1039,Stripe Payout,88000,Revenue,463700
