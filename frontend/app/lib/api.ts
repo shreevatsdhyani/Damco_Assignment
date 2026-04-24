@@ -7,6 +7,10 @@ import type {
   AuditReport,
   QueryRequest,
   QueryResponse,
+  BriefingResponse,
+  HealthScoreResponse,
+  ScenarioResponse,
+  DashboardResponse,
 } from "../types";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
@@ -127,6 +131,61 @@ export const apiClient = {
    */
   getVoices: async () => {
     const response = await api.get("/api/tts/voices");
+    return response.data;
+  },
+
+  /**
+   * Generate executive briefing
+   */
+  generateBriefing: async (fileIds: string[]): Promise<BriefingResponse> => {
+    const response = await api.post<BriefingResponse>("/api/cfo/briefing", {
+      file_ids: fileIds,
+    });
+    return response.data;
+  },
+
+  /**
+   * Get financial health score
+   */
+  getHealthScore: async (): Promise<HealthScoreResponse> => {
+    const response = await api.get<HealthScoreResponse>("/api/cfo/health-score");
+    return response.data;
+  },
+
+  /**
+   * Run what-if scenario
+   */
+  runScenario: async (fileId: string, scenario: string): Promise<ScenarioResponse> => {
+    const response = await api.post<ScenarioResponse>("/api/cfo/scenario", {
+      file_id: fileId,
+      scenario,
+    });
+    return response.data;
+  },
+
+  /**
+   * Generate dynamic AI dashboard
+   */
+  generateDashboard: async (fileIds: string[]): Promise<DashboardResponse> => {
+    const response = await api.post<DashboardResponse>("/api/cfo/dashboard", {
+      file_ids: fileIds,
+    });
+    return response.data;
+  },
+
+  /**
+   * Get AI-generated suggestions and scenario presets
+   */
+  getSuggestions: async (
+    fileIds: string[],
+    lastQuestion?: string,
+    lastAnswer?: string
+  ): Promise<{ questions: string[]; scenarios: string[] }> => {
+    const response = await api.post("/api/cfo/suggestions", {
+      file_ids: fileIds,
+      last_question: lastQuestion || null,
+      last_answer: lastAnswer || null,
+    });
     return response.data;
   },
 };

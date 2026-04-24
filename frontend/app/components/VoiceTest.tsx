@@ -15,10 +15,16 @@ export default function VoiceTest() {
 
   const handleStartListening = () => {
     console.log("Test: Starting listening");
-    startListening((text: string) => {
-      console.log("Test: Received transcript:", text);
-      setTranscript(text);
-    });
+    startListening(
+      (text: string) => {
+        console.log("Test: Received interim:", text);
+        setTranscript(text);
+      },
+      (text: string) => {
+        console.log("Test: Received final:", text);
+        setTranscript(text);
+      }
+    );
   };
 
   const handleSpeak = () => {

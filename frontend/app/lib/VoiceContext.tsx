@@ -43,7 +43,7 @@ interface ISpeechRecognition extends EventTarget {
   onresult: ((event: ISpeechRecognitionEvent) => void) | null
   onstart: (() => void) | null
   onend: (() => void) | null
-  onerror: (() => void) | null
+  onerror: ((event: any) => void) | null
   start(): void
   stop(): void
   abort(): void
@@ -264,6 +264,7 @@ export function VoiceProvider({ children }: { children: React.ReactNode }) {
         setIsSpeaking(false);
       }
       utterance.onerror = (event: any) => {
+        if (event.error === 'interrupted' || event.error === 'canceled') return;
         console.error("Speech synthesis error:", event.error);
         setIsSpeaking(false);
       }
@@ -278,9 +279,16 @@ export function VoiceProvider({ children }: { children: React.ReactNode }) {
     setIsSpeaking(false)
   }, [])
 
-  // Cleanup on unmount
-  useEffect(() => () => {
-    window.speechSynthesis?.cancel()
+  // Cancel speech on unmount AND on page unload/refresh
+  useEffect(() => {
+    const cancelSpeech = () => {
+      window.speechSynthesis?.cancel()
+    }
+    window.addEventListener('beforeunload', cancelSpeech)
+    return () => {
+      cancelSpeech()
+      window.removeEventListener('beforeunload', cancelSpeech)
+    }
   }, [])
 
   return (

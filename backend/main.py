@@ -8,7 +8,7 @@ from fastapi.responses import JSONResponse
 import os
 from dotenv import load_dotenv
 
-from app.routers import files, query, tts, health
+from app.routers import files, query, tts, health, cfo
 
 # Load environment variables
 load_dotenv()
@@ -37,6 +37,7 @@ app.include_router(health.router, prefix="/api", tags=["Health"])
 app.include_router(files.router, prefix="/api/files", tags=["Files"])
 app.include_router(query.router, prefix="/api/query", tags=["Query"])
 app.include_router(tts.router, prefix="/api/tts", tags=["Text-to-Speech"])
+app.include_router(cfo.router, prefix="/api/cfo", tags=["CFO Intelligence"])
 
 @app.get("/")
 async def root():

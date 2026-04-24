@@ -67,3 +67,68 @@ export interface Message {
   audio_url?: string;
   chart_data?: any;
 }
+
+export interface BriefingMetric {
+  label: string;
+  value: number;
+  formatted: string;
+  sublabel?: string;
+  source?: string;
+  status?: "healthy" | "warning" | "critical";
+}
+
+export interface BriefingRisk {
+  severity: "critical" | "warning" | "info";
+  title: string;
+  detail: string;
+  source?: string;
+}
+
+export interface BriefingResponse {
+  greeting: string;
+  summary: string;
+  key_metrics: BriefingMetric[];
+  risks: BriefingRisk[];
+  recommendations: string[];
+}
+
+export interface HealthScoreResponse {
+  score: number;
+  grade: string;
+  breakdown: Record<string, { score: number; weight: number; label: string }>;
+  alerts: Array<{ severity: string; message: string; category: string }>;
+}
+
+export interface ScenarioResponse {
+  scenario: string;
+  original_metrics: Record<string, any>;
+  projected_metrics: Record<string, any>;
+  impact_summary: string;
+  artifact_html?: string;
+}
+
+export interface DashboardKPI {
+  title: string;
+  value: string;
+  trend?: string | null;
+}
+
+export interface DashboardChart {
+  title: string;
+  type: "bar" | "line" | "pie";
+  xAxisKey: string;
+  yAxisKey: string;
+  data: Record<string, any>[];
+}
+
+export interface DashboardResponse {
+  kpis: DashboardKPI[];
+  charts: DashboardChart[];
+  health_breakdown: string;
+  recommendations: string[];
+}
+
+export interface SuggestionsResponse {
+  questions: string[];
+  scenarios: string[];
+}

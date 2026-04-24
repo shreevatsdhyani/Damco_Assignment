@@ -32,7 +32,7 @@ interface EnhancedChatProps {
   usedQuestions?: Set<string>;
 }
 
-const COLORS = ["#bfff00", "#00d9ff", "#ff5757", "#ff9500", "#10e37d", "#a855f7"];
+const COLORS = ["#3b82f6", "#38bdf8", "#f87171", "#fbbf24", "#34d399", "#a855f7"];
 
 export default function EnhancedChat({
   messages,
@@ -195,7 +195,7 @@ export default function EnhancedChat({
               <YAxis />
               <Tooltip />
               <Legend />
-              <Bar dataKey="value" fill="#bfff00" />
+              <Bar dataKey="value" fill="#3b82f6" />
             </BarChart>
           </ResponsiveContainer>
         );
@@ -209,7 +209,7 @@ export default function EnhancedChat({
               <YAxis />
               <Tooltip />
               <Legend />
-              <Line type="monotone" dataKey="value" stroke="#bfff00" strokeWidth={2} />
+              <Line type="monotone" dataKey="value" stroke="#3b82f6" strokeWidth={2} />
             </LineChart>
           </ResponsiveContainer>
         );

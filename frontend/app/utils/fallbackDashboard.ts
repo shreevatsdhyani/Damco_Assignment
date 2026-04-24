@@ -158,8 +158,8 @@ function generateKPIDashboard(question: string, answer: string, numbers: Array<{
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
-      background: #0a0d12;
-      color: #e8ecf1;
+      background: #0d1117;
+      color: #e6edf3;
       font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
       padding: 32px;
       height: 100vh;
@@ -169,7 +169,7 @@ function generateKPIDashboard(question: string, answer: string, numbers: Array<{
     .header {
       font-size: 24px;
       font-weight: 700;
-      color: #bfff00;
+      color: #3b82f6;
       margin-bottom: 24px;
     }
     .kpi-grid {
@@ -179,19 +179,19 @@ function generateKPIDashboard(question: string, answer: string, numbers: Array<{
       margin-bottom: 24px;
     }
     .kpi-card {
-      background: #141b26;
+      background: #161b22;
       border-radius: 12px;
       padding: 24px;
-      border: 2px solid #bfff00;
+      border: 2px solid #3b82f6;
       transition: transform 0.2s;
     }
     .kpi-card:hover {
       transform: translateY(-2px);
-      box-shadow: 0 8px 32px rgba(232, 255, 71, 0.2);
+      box-shadow: 0 8px 32px rgba(59, 130, 246, 0.2);
     }
     .kpi-label {
       font-size: 13px;
-      color: #8b92a1;
+      color: #8b949e;
       text-transform: uppercase;
       letter-spacing: .05em;
       margin-bottom: 12px;
@@ -200,20 +200,20 @@ function generateKPIDashboard(question: string, answer: string, numbers: Array<{
     .kpi-value {
       font-size: 42px;
       font-weight: 700;
-      color: #bfff00;
+      color: #3b82f6;
     }
     .answer-box {
-      background: #141b26;
+      background: #161b22;
       border-radius: 12px;
       padding: 24px;
-      border: 1px solid #2d3748;
+      border: 1px solid #30363d;
       flex: 1;
       overflow-y: auto;
     }
     .answer-text {
       font-size: 15px;
       line-height: 1.6;
-      color: #e8ecf1;
+      color: #e6edf3;
     }
   </style>
 </head>
@@ -243,8 +243,8 @@ function generateTextDashboard(question: string, answer: string): string {
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
-      background: #0a0d12;
-      color: #e8ecf1;
+      background: #0d1117;
+      color: #e6edf3;
       font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
       padding: 32px;
       height: 100vh;
@@ -255,13 +255,13 @@ function generateTextDashboard(question: string, answer: string): string {
     .header {
       font-size: 24px;
       font-weight: 700;
-      color: #bfff00;
+      color: #3b82f6;
     }
     .answer-card {
-      background: #141b26;
+      background: #161b22;
       border-radius: 12px;
       padding: 32px;
-      border: 2px solid ${isIncomplete ? '#ff9500' : '#bfff00'};
+      border: 2px solid ${isIncomplete ? '#fbbf24' : '#3b82f6'};
       flex: 1;
       overflow-y: auto;
       display: flex;
@@ -271,16 +271,16 @@ function generateTextDashboard(question: string, answer: string): string {
     .answer-text {
       font-size: 18px;
       line-height: 1.8;
-      color: #e8ecf1;
+      color: #e6edf3;
       white-space: pre-wrap;
     }
     .notice {
-      background: rgba(255, 170, 0, 0.1);
-      border-left: 4px solid #ff9500;
+      background: rgba(251, 191, 36, 0.1);
+      border-left: 4px solid #fbbf24;
       padding: 16px;
       border-radius: 8px;
       font-size: 14px;
-      color: #ff9500;
+      color: #fbbf24;
       margin-top: auto;
     }
     .notice-title {
@@ -288,7 +288,7 @@ function generateTextDashboard(question: string, answer: string): string {
       margin-bottom: 8px;
     }
     .notice-text {
-      color: #8b92a1;
+      color: #8b949e;
       line-height: 1.5;
     }
   </style>
@@ -324,8 +324,8 @@ function generateIncompleteResponseDashboard(question: string, answer: string): 
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
-      background: #0a0d12;
-      color: #e8ecf1;
+      background: #0d1117;
+      color: #e6edf3;
       font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
       padding: 32px;
       height: 100vh;
@@ -335,10 +335,10 @@ function generateIncompleteResponseDashboard(question: string, answer: string): 
       justify-content: center;
     }
     .error-container {
-      background: #141b26;
+      background: #161b22;
       border-radius: 12px;
       padding: 48px;
-      border: 2px solid #ff9500;
+      border: 2px solid #fbbf24;
       text-align: center;
       max-width: 600px;
     }
@@ -349,19 +349,19 @@ function generateIncompleteResponseDashboard(question: string, answer: string): 
     .title {
       font-size: 24px;
       font-weight: 700;
-      color: #ff9500;
+      color: #fbbf24;
       margin-bottom: 16px;
     }
     .message {
       font-size: 16px;
       line-height: 1.6;
-      color: #8b92a1;
+      color: #8b949e;
       margin-bottom: 24px;
     }
     .question {
       font-size: 14px;
-      color: #bfff00;
-      background: rgba(232, 255, 71, 0.1);
+      color: #3b82f6;
+      background: rgba(59, 130, 246, 0.1);
       padding: 12px 16px;
       border-radius: 8px;
       margin-bottom: 16px;
@@ -369,16 +369,16 @@ function generateIncompleteResponseDashboard(question: string, answer: string): 
     }
     .answer {
       font-size: 14px;
-      color: #e8ecf1;
-      background: rgba(255, 170, 0, 0.1);
+      color: #e6edf3;
+      background: rgba(251, 191, 36, 0.1);
       padding: 12px 16px;
       border-radius: 8px;
-      border-left: 4px solid #ff9500;
+      border-left: 4px solid #fbbf24;
       text-align: left;
     }
     .suggestion {
       font-size: 13px;
-      color: #8b92a1;
+      color: #8b949e;
       margin-top: 24px;
       font-style: italic;
     }

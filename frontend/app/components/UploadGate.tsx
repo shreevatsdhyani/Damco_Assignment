@@ -5,7 +5,7 @@
 
 import { Shield, Upload, CheckCircle2, Circle } from "lucide-react";
 import FileUploader from "./FileUploader";
-import ThemeToggle from "./ThemeToggle";
+
 
 interface UploadGateProps {
   onFileSelect: (file: File) => void;
@@ -45,12 +45,7 @@ export default function UploadGate({
   ];
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4" style={{ background: 'var(--bg-app)' }}>
-      {/* Theme toggle in top-right corner */}
-      <div className="fixed top-4 right-4 z-50">
-        <ThemeToggle />
-      </div>
-
+    <div className="min-h-screen flex items-center justify-center p-4 bg-slate-950 bg-[radial-gradient(#1e293b_1px,transparent_1px)] [background-size:20px_20px]">
       <div className="max-w-4xl w-full">
         {/* Header */}
         <div className="text-center mb-8">

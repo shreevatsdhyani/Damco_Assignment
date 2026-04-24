@@ -4,70 +4,41 @@
  * Aegis Color System - Dark & Light Themes
  */
 
-/* Dark Theme (default) */
+/* Dark Theme (default) — GitHub Copilot / Slate+Blue */
 :root,
 [data-theme="dark"] {
-  --bg-app: #0a0d12;
-  --bg-card: #141b26;
-  --bg-input: #1e293b;
-  --bg-hover: #1e293b;
+  --bg-app: #0d1117;
+  --bg-card: #161b22;
+  --bg-input: #21262d;
+  --bg-hover: #30363d;
 
-  --border-subtle: #2d3748;
+  --border-subtle: #30363d;
 
-  --accent-primary: #bfff00;
-  --accent-primary-hover: #f5ff8a;
-  --accent-secondary: #00d9ff;
+  --accent-primary: #3b82f6;
+  --accent-primary-hover: #60a5fa;
+  --accent-secondary: #38bdf8;
 
-  --text-primary: #e8ecf1;
-  --text-secondary: #8b92a1;
-  --text-disabled: #4a5568;
+  --text-primary: #e6edf3;
+  --text-secondary: #8b949e;
+  --text-disabled: #484f58;
 
-  --status-healthy: #10e37d;
-  --status-warning: #ff9500;
-  --status-critical: #ff5757;
+  --status-healthy: #34d399;
+  --status-warning: #fbbf24;
+  --status-critical: #f87171;
 
-  --shadow-glow: rgba(191, 255, 0, 0.3);
+  --shadow-glow: rgba(59, 130, 246, 0.3);
   --shadow-card: rgba(0, 0, 0, 0.4);
-  --overlay: rgba(10, 13, 18, 0.95);
-
-  /* Text on accent (dark text on bright accent) */
-  --text-on-accent: #0a0d12;
-
-  /* Legacy support */
-  --background: #0a0d12;
-  --foreground: #e8ecf1;
-}
-
-/* Light Theme */
-[data-theme="light"] {
-  --bg-app: #f4f6f9;
-  --bg-card: #ffffff;
-  --bg-input: #e8ecf1;
-  --bg-hover: #dde3eb;
-
-  --border-subtle: #c9d1dc;
-
-  --accent-primary: #4d7a00;
-  --accent-primary-hover: #3d6100;
-  --accent-secondary: #0078a8;
-
-  --text-primary: #0f1419;
-  --text-secondary: #4a5568;
-  --text-disabled: #a0aec0;
-
-  --status-healthy: #059669;
-  --status-warning: #d97706;
-  --status-critical: #dc2626;
-
-  --shadow-glow: rgba(77, 122, 0, 0.2);
-  --shadow-card: rgba(0, 0, 0, 0.08);
-  --overlay: rgba(244, 246, 249, 0.95);
+  --overlay: rgba(13, 17, 23, 0.95);
 
   --text-on-accent: #ffffff;
 
-  --background: #f4f6f9;
-  --foreground: #0f1419;
+  --bg-chat-ai: rgba(30, 41, 59, 0.5);
+  --border-chat-ai: #30363d;
+
+  --background: #0d1117;
+  --foreground: #e6edf3;
 }
+
 
 @theme inline {
   --color-background: var(--bg-app);
@@ -83,4 +54,32 @@ body {
   margin: 0;
   padding: 0;
   transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+@keyframes voice-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 var(--shadow-glow); }
+  50% { box-shadow: 0 0 0 12px transparent; }
+}
+
+@keyframes score-fill {
+  from { stroke-dasharray: 0 88; }
+}
+
+.animate-voice-pulse {
+  animation: voice-pulse 1.5s ease-in-out infinite;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg-app);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border-subtle);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-disabled);
 }

@@ -10,6 +10,40 @@ from app.routers.files import uploaded_files
 import traceback
 import base64
 import json
+import math
+import numpy as np
+import pandas as pd
+
+
+class SafeJSONEncoder(json.JSONEncoder):
+    """Handles pandas Timestamps, numpy types, NaN, Inf — anything the sandbox can produce"""
+    def default(self, obj):
+        if isinstance(obj, pd.Timestamp):
+            return obj.isoformat()
+        if isinstance(obj, (np.integer,)):
+            return int(obj)
+        if isinstance(obj, (np.floating,)):
+            v = float(obj)
+            if math.isnan(v) or math.isinf(v):
+                return None
+            return v
+        if isinstance(obj, np.ndarray):
+            return obj.tolist()
+        if isinstance(obj, (np.bool_,)):
+            return bool(obj)
+        if isinstance(obj, pd.Series):
+            return obj.tolist()
+        if isinstance(obj, pd.DataFrame):
+            return obj.to_dict(orient="records")
+        if isinstance(obj, (pd.Timedelta, pd.Period)):
+            return str(obj)
+        if isinstance(obj, set):
+            return list(obj)
+        return str(obj)
+
+
+def safe_json_dumps(obj):
+    return json.dumps(obj, cls=SafeJSONEncoder, default=str)
 
 router = APIRouter()
 
@@ -90,7 +124,7 @@ async def execute_query(request: QueryRequest):
         if artifact and isinstance(artifact, dict) and artifact.get("content"):
             html_content = artifact["content"]
             if "RESULT_DATA" in html_content and execution_result and execution_result.get("result"):
-                data_json = json.dumps(execution_result["result"])
+                data_json = safe_json_dumps(execution_result["result"])
                 # Replace all variations
                 html_content = html_content.replace('"RESULT_DATA"', data_json)
                 html_content = html_content.replace("'RESULT_DATA'", data_json)
@@ -125,7 +159,9 @@ async def execute_query(request: QueryRequest):
         )
 
     except Exception as e:
-        error_detail = f"Query execution failed: {str(e)}\n{traceback.format_exc()}"
+        error_detail = f"Query execution failed: {str(e)}"
+        print(f"[QUERY ERROR] {error_detail}")
+        traceback.print_exc()
         raise HTTPException(
             status_code=500,
             detail=error_detail

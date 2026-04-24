@@ -117,25 +117,39 @@ class BedrockClient:
             pass
 
         # Try to extract JSON from markdown code blocks
-        if "```json" in text:
-            start = text.index("```json") + len("```json")
-            end = text.index("```", start)
-            json_str = text[start:end].strip()
-            return json.loads(json_str)
+        marker = "```json"
+        idx = text.find(marker)
+        if idx >= 0:
+            start = idx + len(marker)
+            end = text.find("```", start)
+            if end > start:
+                json_str = text[start:end].strip()
+                try:
+                    return json.loads(json_str)
+                except json.JSONDecodeError:
+                    pass
 
         # Try generic code blocks
-        if "```" in text:
-            start = text.index("```") + 3
-            end = text.index("```", start)
-            json_str = text[start:end].strip()
-            return json.loads(json_str)
+        idx = text.find("```")
+        if idx >= 0:
+            start = idx + 3
+            end = text.find("```", start)
+            if end > start:
+                json_str = text[start:end].strip()
+                try:
+                    return json.loads(json_str)
+                except json.JSONDecodeError:
+                    pass
 
         # Last resort: try to find JSON object
         start_idx = text.find("{")
         end_idx = text.rfind("}") + 1
         if start_idx >= 0 and end_idx > start_idx:
             json_str = text[start_idx:end_idx]
-            return json.loads(json_str)
+            try:
+                return json.loads(json_str)
+            except json.JSONDecodeError:
+                pass
 
         raise ValueError(f"Could not extract valid JSON from response: {text[:200]}")
 
@@ -213,8 +227,8 @@ DECISION RULES
    - CDN: https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js
    - Fonts: https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;700&family=DM+Mono:wght@400;500&display=swap
    - Color palette:
-       background  #0a0b0f   surface  #111318   accent   #e8ff47
-       text        #f0f2f8   muted    #7a8099   border   #1f2937
+       background  #0d1117   surface  #161b22   accent   #3b82f6
+       text        #e6edf3   muted    #8b949e   border   #30363d
    - Fonts: headings → Bebas Neue, body → DM Sans, numbers → DM Mono
    - Charts: maintainAspectRatio: false, container height in CSS
    - Style: border-radius 12px, box-shadow, hover effects
@@ -230,6 +244,23 @@ DECISION RULES
    - For each, list only the column names you actually referenced in aggregation_code or used to answer the question
    - If no computation was needed, list the DataFrames that were relevant to the answer
    - Example: [{"dataframe": "df", "columns_used": ["revenue", "region"]}]
+
+════════════════════════════════════════════════════════
+HANDLING BROAD / GENERAL QUERIES
+════════════════════════════════════════════════════════
+
+If the user asks a vague question like "Show me key metrics", "Create a dashboard",
+"Give me an overview", "What insights can you find?", or any general finance/business question:
+
+- For DATA questions: Pick the most relevant columns from the schema and compute meaningful metrics.
+  Generate aggregation_code that computes 3-5 key statistics (totals, averages, counts, distributions).
+  Return output_type "dashboard" or "metric" with render_mode "artifact".
+  NEVER return an error or empty response for broad questions — always find something useful.
+
+- For GENERAL KNOWLEDGE questions (e.g. "What is EBITDA?", "How does DCF work?",
+  "Best practices for cash management"): Use output_type "text", render_mode "chat",
+  set aggregation_code to null, and answer from your financial knowledge in chat_message.
+  You are also a knowledgeable financial advisor, not just a data tool.
 
 ════════════════════════════════════════════════════════
 EXAMPLE OUTPUTS
@@ -254,7 +285,7 @@ CHART:
   "chat_message": "Here is a bar chart showing amounts by category.",
   "artifact": {
     "type": "html",
-    "content": "<!DOCTYPE html><html lang='en'><head><meta charset='UTF-8'><title>Chart</title><link href='https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;700&family=DM+Mono:wght@400;500&display=swap' rel='stylesheet'><script src='https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js'></script><style>*{box-sizing:border-box;margin:0;padding:0}body{background:#0a0b0f;color:#f0f2f8;font-family:'DM Sans',sans-serif;padding:24px}.card{background:#111318;border-radius:12px;padding:24px;box-shadow:0 4px 24px rgba(0,0,0,.4)}.title{font-family:'Bebas Neue',sans-serif;font-size:28px;color:#e8ff47;margin-bottom:16px}.chart-wrap{position:relative;height:380px}</style></head><body><div class='card'><div class='title'>Amount by Category</div><div class='chart-wrap'><canvas id='c'></canvas></div></div><script>const d=RESULT_DATA;new Chart(document.getElementById('c'),{type:'bar',data:{labels:d.map(x=>x.category),datasets:[{data:d.map(x=>x.amount),backgroundColor:'#e8ff47',borderRadius:6,hoverBackgroundColor:'#f5ff8a'}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{grid:{color:'#1f2937'},ticks:{color:'#7a8099'}},x:{grid:{display:false},ticks:{color:'#7a8099'}}}}})</script></body></html>"
+    "content": "<!DOCTYPE html><html lang='en'><head><meta charset='UTF-8'><title>Chart</title><link href='https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;700&family=DM+Mono:wght@400;500&display=swap' rel='stylesheet'><script src='https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js'></script><style>*{box-sizing:border-box;margin:0;padding:0}body{background:#0d1117;color:#e6edf3;font-family:'DM Sans',sans-serif;padding:24px}.card{background:#161b22;border-radius:12px;padding:24px;box-shadow:0 4px 24px rgba(0,0,0,.4)}.title{font-family:'Bebas Neue',sans-serif;font-size:28px;color:#3b82f6;margin-bottom:16px}.chart-wrap{position:relative;height:380px}</style></head><body><div class='card'><div class='title'>Amount by Category</div><div class='chart-wrap'><canvas id='c'></canvas></div></div><script>const d=RESULT_DATA;new Chart(document.getElementById('c'),{type:'bar',data:{labels:d.map(x=>x.category),datasets:[{data:d.map(x=>x.amount),backgroundColor:'#3b82f6',borderRadius:6,hoverBackgroundColor:'#60a5fa'}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{grid:{color:'#30363d'},ticks:{color:'#8b949e'}},x:{grid:{display:false},ticks:{color:'#8b949e'}}}}})</script></body></html>"
   },
   "insight": "Category distribution reveals revenue concentration. Focus marketing efforts on underperforming categories to balance revenue streams.",
   "sources": [{"dataframe": "df", "columns_used": ["category", "amount"]}]
@@ -262,44 +293,28 @@ CHART:
 
     def _build_user_prompt(self, schema: Dict[str, Any], query: str) -> str:
         """Build user prompt with schema and query"""
-        columns_info = "\n".join([
-            f"  - {col['name']}: {col['dtype']} (sample: {col.get('sample_values', [])})"
-            for col in schema.get("columns", [])
-        ])
+        columns_info = []
+        col_names = []
+        for col in schema.get("columns", []):
+            line = f"  - {col['name']}: {col['dtype']} (sample: {col.get('sample_values', [])})"
+            columns_info.append(line)
+            col_names.append(col['name'])
 
-        return f"""DataFrame Schema:
-{columns_info}
+        return f"""═══ AVAILABLE COLUMNS IN `df` (use ONLY these) ═══
+{chr(10).join(columns_info)}
 
+Column names: {col_names}
 Total Rows: {schema.get('row_count', 0)}
 
-User Query: {query}
+═══ USER QUERY ═══
+{query}
 
-Generate Python code using the 'df' variable to answer this query.
+CRITICAL: Your aggregation_code must ONLY reference columns from the list above: {col_names}
+If the user asks about something not in the columns, map their intent to the closest available column.
+If the query is a general knowledge question (not about this data), set aggregation_code to null and answer in chat_message.
 
-IMPORTANT FOR VISUALIZATION:
-If the user asks for a chart, graph, visualization, or "show me", create a variable called RESULT_DATA with chart data:
-
-```python
-# For bar/line charts:
-RESULT_DATA = {{
-    "type": "bar",  # or "line"
-    "data": [
-        {{"name": "Category1", "value": 123}},
-        {{"name": "Category2", "value": 456}},
-    ]
-}}
-
-# For pie charts:
-RESULT_DATA = {{
-    "type": "pie",
-    "data": [
-        {{"name": "Slice1", "value": 30}},
-        {{"name": "Slice2", "value": 70}},
-    ]
-}}
-```
-
-Remember: Only use columns from the schema above."""
+For visualizations, use `result` variable with chart-ready dict data:
+result = df.groupby('actual_column')['actual_numeric_col'].sum().reset_index().to_dict(orient='records')"""
 
     def _extract_code(self, text: str) -> str:
         """Extract code from markdown code blocks"""

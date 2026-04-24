@@ -81,3 +81,71 @@ class HealthResponse(BaseModel):
     status: str
     version: str
     uptime: float
+
+class BriefingRequest(BaseModel):
+    """Request for executive briefing"""
+    file_ids: List[str]
+
+class BriefingResponse(BaseModel):
+    """Executive briefing response"""
+    summary: str
+    key_metrics: List[Dict[str, Any]]
+    risks: List[Dict[str, Any]]
+    recommendations: List[str]
+    greeting: str
+
+class HealthScoreResponse(BaseModel):
+    """Financial health score"""
+    score: int = Field(..., ge=0, le=100)
+    grade: str
+    breakdown: Dict[str, Any]
+    alerts: List[Dict[str, Any]]
+
+class ScenarioRequest(BaseModel):
+    """What-if scenario request"""
+    file_id: str
+    scenario: str
+
+class ScenarioResponse(BaseModel):
+    """What-if scenario result"""
+    scenario: str
+    original_metrics: Dict[str, Any]
+    projected_metrics: Dict[str, Any]
+    impact_summary: str
+    artifact_html: Optional[str] = None
+
+class DashboardRequest(BaseModel):
+    """Request for AI-generated dynamic dashboard"""
+    file_ids: List[str]
+
+class DashboardKPI(BaseModel):
+    """Single KPI metric"""
+    title: str
+    value: str
+    trend: Optional[str] = None
+
+class DashboardChart(BaseModel):
+    """Single chart"""
+    title: str
+    type: str = Field(..., description="bar, line, or pie")
+    xAxisKey: str
+    yAxisKey: str
+    data: List[Dict[str, Any]]
+
+class DashboardResponse(BaseModel):
+    """Complete dynamic dashboard"""
+    kpis: List[DashboardKPI]
+    charts: List[DashboardChart]
+    health_breakdown: str
+    recommendations: List[str]
+
+class SuggestionsRequest(BaseModel):
+    """Request for AI-generated suggestions"""
+    file_ids: List[str]
+    last_question: Optional[str] = None
+    last_answer: Optional[str] = None
+
+class SuggestionsResponse(BaseModel):
+    """AI-generated suggestions and scenario presets"""
+    questions: List[str]
+    scenarios: List[str]

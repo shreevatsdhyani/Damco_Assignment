@@ -338,15 +338,15 @@ function generateBudgetTable(data: any[]): string {
 <link href='https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap' rel='stylesheet'>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { background: #0a0d12; color: #e8ecf1; font-family: 'Inter', sans-serif; padding: 24px; }
-  h1 { color: #bfff00; margin-bottom: 20px; font-size: 28px; }
-  table { width: 100%; border-collapse: collapse; background: #141b26; border-radius: 8px; overflow: hidden; }
-  th { background: #2d3748; padding: 12px; text-align: left; font-size: 12px; text-transform: uppercase; color: #8b92a1; }
-  td { padding: 12px; border-top: 1px solid #2d3748; font-size: 14px; }
+  body { background: #0d1117; color: #e6edf3; font-family: 'Inter', sans-serif; padding: 24px; }
+  h1 { color: #3b82f6; margin-bottom: 20px; font-size: 28px; }
+  table { width: 100%; border-collapse: collapse; background: #161b22; border-radius: 8px; overflow: hidden; }
+  th { background: #30363d; padding: 12px; text-align: left; font-size: 12px; text-transform: uppercase; color: #8b949e; }
+  td { padding: 12px; border-top: 1px solid #30363d; font-size: 14px; }
   .variance { font-weight: 600; }
-  .variance.over { color: #ff5757; }
-  .variance.under { color: #10e37d; }
-  .pct { font-size: 12px; color: #8b92a1; margin-left: 8px; }
+  .variance.over { color: #f87171; }
+  .variance.under { color: #34d399; }
+  .pct { font-size: 12px; color: #8b949e; margin-left: 8px; }
 </style></head><body>
 <h1>🚨 Departments Over Budget</h1>
 <table>
@@ -377,14 +377,14 @@ function generateCustomerTable(data: any[], title: string): string {
 <link href='https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap' rel='stylesheet'>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { background: #0a0d12; color: #e8ecf1; font-family: 'Inter', sans-serif; padding: 24px; }
-  h1 { color: #bfff00; margin-bottom: 20px; font-size: 28px; }
-  table { width: 100%; border-collapse: collapse; background: #141b26; border-radius: 8px; overflow: hidden; }
-  th { background: #2d3748; padding: 12px; text-align: left; font-size: 12px; text-transform: uppercase; color: #8b92a1; }
-  td { padding: 12px; border-top: 1px solid #2d3748; font-size: 14px; }
-  .risk-high-risk { color: #ff5757; font-weight: 600; }
-  .risk-medium-risk { color: #ff9500; font-weight: 600; }
-  .risk-low-risk { color: #10e37d; font-weight: 600; }
+  body { background: #0d1117; color: #e6edf3; font-family: 'Inter', sans-serif; padding: 24px; }
+  h1 { color: #3b82f6; margin-bottom: 20px; font-size: 28px; }
+  table { width: 100%; border-collapse: collapse; background: #161b22; border-radius: 8px; overflow: hidden; }
+  th { background: #30363d; padding: 12px; text-align: left; font-size: 12px; text-transform: uppercase; color: #8b949e; }
+  td { padding: 12px; border-top: 1px solid #30363d; font-size: 14px; }
+  .risk-high-risk { color: #f87171; font-weight: 600; }
+  .risk-medium-risk { color: #fbbf24; font-weight: 600; }
+  .risk-low-risk { color: #34d399; font-weight: 600; }
 </style></head><body>
 <h1>🚨 ${title}</h1>
 <table>
@@ -405,11 +405,11 @@ function generateKPICard(title: string, value: string, subtitle: string): string
 <link href='https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap' rel='stylesheet'>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { background: #0a0d12; color: #e8ecf1; font-family: 'Inter', sans-serif; padding: 48px; display: flex; align-items: center; justify-content: center; height: 100vh; }
-  .card { background: #141b26; border: 2px solid #bfff00; border-radius: 16px; padding: 48px; text-align: center; min-width: 400px; }
-  .title { font-size: 16px; color: #8b92a1; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 16px; }
-  .value { font-size: 64px; font-weight: 700; color: #bfff00; margin-bottom: 12px; }
-  .subtitle { font-size: 14px; color: #8b92a1; }
+  body { background: #0d1117; color: #e6edf3; font-family: 'Inter', sans-serif; padding: 48px; display: flex; align-items: center; justify-content: center; height: 100vh; }
+  .card { background: #161b22; border: 2px solid #3b82f6; border-radius: 16px; padding: 48px; text-align: center; min-width: 400px; }
+  .title { font-size: 16px; color: #8b949e; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 16px; }
+  .value { font-size: 64px; font-weight: 700; color: #3b82f6; margin-bottom: 12px; }
+  .subtitle { font-size: 14px; color: #8b949e; }
 </style></head><body>
 <div class="card">
   <div class="title">${title}</div>
@@ -425,10 +425,10 @@ function generateSimpleCard(title: string, message: string): string {
 <link href='https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap' rel='stylesheet'>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { background: #0a0d12; color: #e8ecf1; font-family: 'Inter', sans-serif; padding: 48px; display: flex; align-items: center; justify-content: center; height: 100vh; }
-  .card { background: #141b26; border: 2px solid #10e37d; border-radius: 16px; padding: 48px; text-align: center; min-width: 400px; }
+  body { background: #0d1117; color: #e6edf3; font-family: 'Inter', sans-serif; padding: 48px; display: flex; align-items: center; justify-content: center; height: 100vh; }
+  .card { background: #161b22; border: 2px solid #34d399; border-radius: 16px; padding: 48px; text-align: center; min-width: 400px; }
   .title { font-size: 32px; margin-bottom: 16px; }
-  .message { font-size: 18px; color: #8b92a1; }
+  .message { font-size: 18px; color: #8b949e; }
 </style></head><body>
 <div class="card">
   <div class="title">${title}</div>

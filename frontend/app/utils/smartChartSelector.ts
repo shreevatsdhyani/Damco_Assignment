@@ -203,7 +203,7 @@ function hasLongLabels(data: DataPoint[]): boolean {
 export function generateChartConfig(
   type: ChartType,
   data: DataPoint[],
-  colors: string[] = ['#bfff00', '#00d9ff', '#ff5757', '#ff9500', '#10e37d', '#a855f7']
+  colors: string[] = ['#3b82f6', '#38bdf8', '#f87171', '#fbbf24', '#34d399', '#a855f7']
 ): any {
   const labels = data.map(d => d.name || d.label || 'Unknown');
   const values = data.map(d => d.value);
@@ -214,13 +214,13 @@ export function generateChartConfig(
     plugins: {
       legend: {
         display: type === 'pie',
-        labels: { color: '#e8ecf1', font: { size: 12 } }
+        labels: { color: '#e6edf3', font: { size: 12 } }
       },
       tooltip: {
-        backgroundColor: '#141b26',
-        titleColor: '#bfff00',
-        bodyColor: '#e8ecf1',
-        borderColor: '#2d3748',
+        backgroundColor: '#161b22',
+        titleColor: '#3b82f6',
+        bodyColor: '#e6edf3',
+        borderColor: '#30363d',
         borderWidth: 1,
         padding: 12,
         displayColors: type !== 'pie'
@@ -241,7 +241,7 @@ export function generateChartConfig(
             tension: 0.4,
             fill: true,
             pointBackgroundColor: colors[0],
-            pointBorderColor: '#141b26',
+            pointBorderColor: '#161b22',
             pointRadius: 4,
             pointHoverRadius: 6,
             borderWidth: 3
@@ -251,12 +251,12 @@ export function generateChartConfig(
           ...baseConfig,
           scales: {
             y: {
-              grid: { color: '#2d3748', drawBorder: false },
-              ticks: { color: '#8b92a1', font: { size: 11 } }
+              grid: { color: '#30363d', drawBorder: false },
+              ticks: { color: '#8b949e', font: { size: 11 } }
             },
             x: {
               grid: { display: false },
-              ticks: { color: '#8b92a1', font: { size: 11 } }
+              ticks: { color: '#8b949e', font: { size: 11 } }
             }
           }
         }
@@ -270,7 +270,7 @@ export function generateChartConfig(
           datasets: [{
             data: values,
             backgroundColor: colors.slice(0, data.length),
-            borderColor: '#0a0d12',
+            borderColor: '#0d1117',
             borderWidth: 2,
             hoverOffset: 8
           }]
@@ -283,7 +283,7 @@ export function generateChartConfig(
               display: true,
               position: 'right',
               labels: {
-                color: '#e8ecf1',
+                color: '#e6edf3',
                 font: { size: 12 },
                 padding: 15,
                 usePointStyle: true
@@ -310,14 +310,14 @@ export function generateChartConfig(
           ...baseConfig,
           scales: {
             y: {
-              title: { display: true, text: 'Frequency', color: '#8b92a1' },
-              grid: { color: '#2d3748', drawBorder: false },
-              ticks: { color: '#8b92a1', font: { size: 11 } }
+              title: { display: true, text: 'Frequency', color: '#8b949e' },
+              grid: { color: '#30363d', drawBorder: false },
+              ticks: { color: '#8b949e', font: { size: 11 } }
             },
             x: {
-              title: { display: true, text: 'Range', color: '#8b92a1' },
+              title: { display: true, text: 'Range', color: '#8b949e' },
               grid: { display: false },
-              ticks: { color: '#8b92a1', font: { size: 11 } }
+              ticks: { color: '#8b949e', font: { size: 11 } }
             }
           }
         }
@@ -340,13 +340,13 @@ export function generateChartConfig(
           indexAxis: 'y',
           scales: {
             x: {
-              grid: { color: '#2d3748', drawBorder: false },
-              ticks: { color: '#8b92a1', font: { size: 11 } }
+              grid: { color: '#30363d', drawBorder: false },
+              ticks: { color: '#8b949e', font: { size: 11 } }
             },
             y: {
               grid: { display: false },
               ticks: {
-                color: '#8b92a1',
+                color: '#8b949e',
                 font: { size: 11 },
                 autoSkip: false
               }
@@ -372,12 +372,12 @@ export function generateChartConfig(
           ...baseConfig,
           scales: {
             y: {
-              grid: { color: '#2d3748', drawBorder: false },
-              ticks: { color: '#8b92a1', font: { size: 11 } }
+              grid: { color: '#30363d', drawBorder: false },
+              ticks: { color: '#8b949e', font: { size: 11 } }
             },
             x: {
               grid: { display: false },
-              ticks: { color: '#8b92a1', font: { size: 11 } }
+              ticks: { color: '#8b949e', font: { size: 11 } }
             }
           }
         }

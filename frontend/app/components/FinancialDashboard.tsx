@@ -1,10 +1,12 @@
 /**
  * Financial Dashboard - Auto-generated KPI dashboard
- * Military Intelligence Theme
+ * Theme-aware via ArtifactPanel
  */
 "use client";
 
-import { useEffect, useRef } from "react";
+import ArtifactPanel from "./ArtifactPanel";
+import { useTheme } from "../lib/ThemeContext";
+import { AegisColors } from "../styles/colors";
 
 interface KPIMetric {
   value: number;
@@ -38,34 +40,24 @@ interface FinancialDashboardProps {
 }
 
 export default function FinancialDashboard({ kpis, anomalies, chartData }: FinancialDashboardProps) {
-  const iframeRef = useRef<HTMLIFrameElement>(null);
-
-  useEffect(() => {
-    if (iframeRef.current) {
-      const html = generateDashboardHTML(kpis, anomalies, chartData);
-      const iframe = iframeRef.current;
-      const doc = iframe.contentDocument || iframe.contentWindow?.document;
-      if (doc) {
-        doc.open();
-        doc.write(html);
-        doc.close();
-      }
-    }
-  }, [kpis, anomalies, chartData]);
+  const { theme } = useTheme();
+  const c = AegisColors[theme];
+  const html = generateDashboardHTML(kpis, anomalies, chartData, c);
 
   return (
-    <iframe
-      ref={iframeRef}
-      className="w-full h-full border-0"
-      title="Financial Dashboard"
-    />
+    <div className="w-full h-full">
+      <ArtifactPanel html={html} />
+    </div>
   );
 }
+
+type ThemeColors = typeof AegisColors.dark;
 
 function generateDashboardHTML(
   kpis: FinancialDashboardProps['kpis'],
   anomalies: Anomaly[],
-  chartData: ChartData
+  chartData: ChartData,
+  c: ThemeColors
 ): string {
   const formatCurrency = (val: number) => {
     if (val >= 1000000) return `$${(val / 1000000).toFixed(1)}M`;
@@ -75,12 +67,6 @@ function generateDashboardHTML(
 
   const formatNumber = (val: number) => {
     return val.toFixed(1);
-  };
-
-  const getStatusColor = (status: string) => {
-    if (status === 'healthy') return '#10e37d';  // Emerald green
-    if (status === 'warning') return '#ff9500';  // Amber orange
-    return '#ff5757';  // Coral red
   };
 
   const spendChartData = JSON.stringify(chartData.spendByCategory);
@@ -96,8 +82,8 @@ function generateDashboardHTML(
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
-      background: #0a0d12;
-      color: #e8ecf1;
+      background: ${c.background.app};
+      color: ${c.text.primary};
       font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
       padding: 24px;
       overflow-y: auto;
@@ -106,7 +92,7 @@ function generateDashboardHTML(
     .header {
       font-size: 28px;
       font-weight: 700;
-      color: #bfff00;
+      color: ${c.accent.primary};
       margin-bottom: 24px;
       display: flex;
       align-items: center;
@@ -119,7 +105,7 @@ function generateDashboardHTML(
       margin-bottom: 24px;
     }
     .kpi-card {
-      background: #141b26;
+      background: ${c.background.card};
       border-radius: 12px;
       padding: 20px;
       border: 2px solid transparent;
@@ -127,14 +113,14 @@ function generateDashboardHTML(
     }
     .kpi-card:hover {
       transform: translateY(-2px);
-      box-shadow: 0 8px 32px rgba(0,0,0,.4);
+      box-shadow: 0 8px 32px rgba(0,0,0,.1);
     }
-    .kpi-card.healthy { border-color: #10e37d; }
-    .kpi-card.warning { border-color: #ff9500; }
-    .kpi-card.critical { border-color: #ff5757; }
+    .kpi-card.healthy { border-color: ${c.status.healthy}; }
+    .kpi-card.warning { border-color: ${c.status.warning}; }
+    .kpi-card.critical { border-color: ${c.status.critical}; }
     .kpi-label {
       font-size: 12px;
-      color: #8b92a1;
+      color: ${c.text.secondary};
       text-transform: uppercase;
       letter-spacing: .05em;
       margin-bottom: 12px;
@@ -145,12 +131,12 @@ function generateDashboardHTML(
       font-weight: 700;
       margin-bottom: 8px;
     }
-    .kpi-card.healthy .kpi-value { color: #10e37d; }
-    .kpi-card.warning .kpi-value { color: #ff9500; }
-    .kpi-card.critical .kpi-value { color: #ff5757; }
+    .kpi-card.healthy .kpi-value { color: ${c.status.healthy}; }
+    .kpi-card.warning .kpi-value { color: ${c.status.warning}; }
+    .kpi-card.critical .kpi-value { color: ${c.status.critical}; }
     .kpi-desc {
       font-size: 11px;
-      color: #8b92a1;
+      color: ${c.text.secondary};
       line-height: 1.4;
     }
     .chart-grid {
@@ -160,7 +146,7 @@ function generateDashboardHTML(
       margin-bottom: 24px;
     }
     .chart-card {
-      background: #141b26;
+      background: ${c.background.card};
       border-radius: 12px;
       padding: 20px;
       min-height: 300px;
@@ -168,7 +154,7 @@ function generateDashboardHTML(
     .chart-title {
       font-size: 16px;
       font-weight: 600;
-      color: #bfff00;
+      color: ${c.accent.primary};
       margin-bottom: 16px;
     }
     .chart-wrap {
@@ -176,48 +162,48 @@ function generateDashboardHTML(
       height: 250px;
     }
     .audit-panel {
-      background: #141b26;
+      background: ${c.background.card};
       border-radius: 12px;
       padding: 20px;
-      border: 2px solid #ff5757;
+      border: 2px solid ${c.status.critical};
       max-height: 400px;
       overflow-y: auto;
     }
     .audit-header {
       font-size: 18px;
       font-weight: 700;
-      color: #ff5757;
+      color: ${c.status.critical};
       margin-bottom: 16px;
       display: flex;
       align-items: center;
       gap: 8px;
     }
     .anomaly-item {
-      background: rgba(255, 68, 68, 0.1);
-      border-left: 4px solid #ff5757;
+      background: color-mix(in srgb, ${c.status.critical} 8%, transparent);
+      border-left: 4px solid ${c.status.critical};
       padding: 12px;
       margin-bottom: 12px;
       border-radius: 6px;
     }
     .anomaly-item.warning {
-      background: rgba(255, 170, 0, 0.1);
-      border-left-color: #ff9500;
+      background: color-mix(in srgb, ${c.status.warning} 8%, transparent);
+      border-left-color: ${c.status.warning};
     }
     .anomaly-title {
       font-size: 14px;
       font-weight: 600;
-      color: #ff5757;
+      color: ${c.status.critical};
       margin-bottom: 4px;
       display: flex;
       align-items: center;
       gap: 8px;
     }
     .anomaly-item.warning .anomaly-title {
-      color: #ff9500;
+      color: ${c.status.warning};
     }
     .anomaly-desc {
       font-size: 13px;
-      color: #e8ecf1;
+      color: ${c.text.primary};
       line-height: 1.4;
     }
     .severity-badge {
@@ -230,25 +216,23 @@ function generateDashboardHTML(
       letter-spacing: .05em;
     }
     .severity-badge.critical {
-      background: #ff5757;
+      background: ${c.status.critical};
       color: white;
     }
     .severity-badge.warning {
-      background: #ff9500;
-      color: #0a0d12;
+      background: ${c.status.warning};
+      color: ${c.background.app};
     }
   </style>
 </head>
 <body>
   <div class='header'>
-    <span>📊</span>
     <span>Financial Dashboard</span>
   </div>
 
-  <!-- KPI Cards -->
   <div class='kpi-grid'>
     <div class='kpi-card ${kpis.cashRunway.status}'>
-      <div class='kpi-label'>💰 Cash Runway</div>
+      <div class='kpi-label'>Cash Runway</div>
       <div class='kpi-value'>${formatNumber(kpis.cashRunway.value)} mo</div>
       <div class='kpi-desc'>${
         kpis.cashRunway.value > 12 ? 'Healthy runway' :
@@ -258,19 +242,19 @@ function generateDashboardHTML(
     </div>
 
     <div class='kpi-card ${kpis.monthlyBurn.status}'>
-      <div class='kpi-label'>🔥 Monthly Burn Rate</div>
+      <div class='kpi-label'>Monthly Burn Rate</div>
       <div class='kpi-value'>${formatCurrency(kpis.monthlyBurn.value)}</div>
       <div class='kpi-desc'>Average monthly outflows</div>
     </div>
 
     <div class='kpi-card ${kpis.mrr.status}'>
-      <div class='kpi-label'>📈 Monthly Recurring Revenue</div>
+      <div class='kpi-label'>Monthly Recurring Revenue</div>
       <div class='kpi-value'>${formatCurrency(kpis.mrr.value)}</div>
       <div class='kpi-desc'>From active subscriptions</div>
     </div>
 
     <div class='kpi-card ${kpis.churnRate.status}'>
-      <div class='kpi-label'>📉 Churn Rate</div>
+      <div class='kpi-label'>Churn Rate</div>
       <div class='kpi-value'>${formatNumber(kpis.churnRate.value)}%</div>
       <div class='kpi-desc'>${
         kpis.churnRate.value < 5 ? 'Excellent retention' :
@@ -280,13 +264,13 @@ function generateDashboardHTML(
     </div>
 
     <div class='kpi-card ${kpis.headcountCost.status}'>
-      <div class='kpi-label'>👥 Total Headcount Cost</div>
+      <div class='kpi-label'>Total Headcount Cost</div>
       <div class='kpi-value'>${formatCurrency(kpis.headcountCost.value)}</div>
       <div class='kpi-desc'>Active employee salaries</div>
     </div>
 
     <div class='kpi-card ${kpis.budgetVariance.status}'>
-      <div class='kpi-label'>⚠️ Budget Variance</div>
+      <div class='kpi-label'>Budget Variance</div>
       <div class='kpi-value'>${kpis.budgetVariance.value >= 0 ? '+' : ''}${formatCurrency(kpis.budgetVariance.value)}</div>
       <div class='kpi-desc'>${
         kpis.budgetVariance.value < 0 ? 'Under budget' :
@@ -296,34 +280,31 @@ function generateDashboardHTML(
     </div>
   </div>
 
-  <!-- Charts -->
   <div class='chart-grid'>
     <div class='chart-card'>
-      <div class='chart-title'>💸 Spend by Category</div>
+      <div class='chart-title'>Spend by Category</div>
       <div class='chart-wrap'>
         <canvas id='spendChart'></canvas>
       </div>
     </div>
 
     <div class='chart-card'>
-      <div class='chart-title'>📊 Revenue Metrics</div>
+      <div class='chart-title'>Revenue Metrics</div>
       <div class='chart-wrap'>
         <canvas id='mrrChart'></canvas>
       </div>
     </div>
   </div>
 
-  <!-- Forensic Audit Panel -->
   <div class='audit-panel'>
     <div class='audit-header'>
-      <span>🚨</span>
       <span>FORENSIC AUDIT ALERTS</span>
-      <span style='margin-left: auto; font-size: 14px; color: #8b92a1;'>${anomalies.length} anomalies detected</span>
+      <span style='margin-left: auto; font-size: 14px; color: ${c.text.secondary};'>${anomalies.length} anomalies detected</span>
     </div>
 
     ${anomalies.length === 0 ? `
-      <div style='color: #10e37d; text-align: center; padding: 20px;'>
-        ✅ No anomalies detected - all metrics look healthy
+      <div style='color: ${c.status.healthy}; text-align: center; padding: 20px;'>
+        No anomalies detected - all metrics look healthy
       </div>
     ` : anomalies.map(anomaly => `
       <div class='anomaly-item ${anomaly.severity}'>
@@ -337,7 +318,6 @@ function generateDashboardHTML(
   </div>
 
   <script>
-    // Spend by Category Chart
     const spendData = ${spendChartData};
     new Chart(document.getElementById('spendChart'), {
       type: 'bar',
@@ -345,9 +325,9 @@ function generateDashboardHTML(
         labels: spendData.map(x => x.name),
         datasets: [{
           data: spendData.map(x => x.value),
-          backgroundColor: '#bfff00',
+          backgroundColor: '${c.accent.primary}',
           borderRadius: 6,
-          hoverBackgroundColor: '#f5ff8a'
+          hoverBackgroundColor: '${c.accent.primaryHover}'
         }]
       },
       options: {
@@ -356,14 +336,14 @@ function generateDashboardHTML(
         plugins: {
           legend: { display: false },
           tooltip: {
-            backgroundColor: '#141b26',
-            titleColor: '#bfff00',
-            bodyColor: '#e8ecf1',
-            borderColor: '#2d3748',
+            backgroundColor: '${c.background.card}',
+            titleColor: '${c.accent.primary}',
+            bodyColor: '${c.text.primary}',
+            borderColor: '${c.border.subtle}',
             borderWidth: 1,
             callbacks: {
-              label: (c) => {
-                const val = c.parsed.y;
+              label: (ctx) => {
+                const val = ctx.parsed.y;
                 if (val >= 1000000) return '$' + (val / 1000000).toFixed(1) + 'M';
                 if (val >= 1000) return '$' + (val / 1000).toFixed(0) + 'K';
                 return '$' + val.toFixed(0);
@@ -373,9 +353,9 @@ function generateDashboardHTML(
         },
         scales: {
           y: {
-            grid: { display: false },
+            grid: { color: '${c.border.subtle}' },
             ticks: {
-              color: '#8b92a1',
+              color: '${c.text.secondary}',
               callback: (v) => {
                 if (v >= 1000000) return '$' + (v / 1000000).toFixed(1) + 'M';
                 if (v >= 1000) return '$' + (v / 1000).toFixed(0) + 'K';
@@ -385,20 +365,19 @@ function generateDashboardHTML(
           },
           x: {
             grid: { display: false },
-            ticks: { color: '#8b92a1' }
+            ticks: { color: '${c.text.secondary}' }
           }
         }
       }
     });
 
-    // MRR Chart (simple bar for now)
     new Chart(document.getElementById('mrrChart'), {
       type: 'bar',
       data: {
         labels: ['Current MRR'],
         datasets: [{
           data: [${kpis.mrr.value}],
-          backgroundColor: '${getStatusColor(kpis.mrr.status)}',
+          backgroundColor: '${kpis.mrr.status === "healthy" ? c.status.healthy : kpis.mrr.status === "warning" ? c.status.warning : c.status.critical}',
           borderRadius: 6
         }]
       },
@@ -408,14 +387,14 @@ function generateDashboardHTML(
         plugins: {
           legend: { display: false },
           tooltip: {
-            backgroundColor: '#141b26',
-            titleColor: '#bfff00',
-            bodyColor: '#e8ecf1',
-            borderColor: '#2d3748',
+            backgroundColor: '${c.background.card}',
+            titleColor: '${c.accent.primary}',
+            bodyColor: '${c.text.primary}',
+            borderColor: '${c.border.subtle}',
             borderWidth: 1,
             callbacks: {
-              label: (c) => {
-                const val = c.parsed.y;
+              label: (ctx) => {
+                const val = ctx.parsed.y;
                 if (val >= 1000000) return '$' + (val / 1000000).toFixed(1) + 'M';
                 if (val >= 1000) return '$' + (val / 1000).toFixed(0) + 'K';
                 return '$' + val.toFixed(0);
@@ -425,9 +404,9 @@ function generateDashboardHTML(
         },
         scales: {
           y: {
-            grid: { display: false },
+            grid: { color: '${c.border.subtle}' },
             ticks: {
-              color: '#8b92a1',
+              color: '${c.text.secondary}',
               callback: (v) => {
                 if (v >= 1000000) return '$' + (v / 1000000).toFixed(1) + 'M';
                 if (v >= 1000) return '$' + (v / 1000).toFixed(0) + 'K';
@@ -437,7 +416,7 @@ function generateDashboardHTML(
           },
           x: {
             grid: { display: false },
-            ticks: { color: '#8b92a1' }
+            ticks: { color: '${c.text.secondary}' }
           }
         }
       }

@@ -11,7 +11,7 @@ interface DataPoint {
   value: number;
 }
 
-const COLORS = ['#bfff00', '#00d9ff', '#ff5757', '#ff9500', '#10e37d', '#a855f7'];
+const COLORS = ['#3b82f6', '#38bdf8', '#f87171', '#fbbf24', '#34d399', '#a855f7'];
 
 /**
  * Generate smart chart HTML with automatic chart type selection
@@ -41,8 +41,8 @@ export function generateSmartChartHTML(
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
-      background: #0a0d12;
-      color: #e8ecf1;
+      background: #0d1117;
+      color: #e6edf3;
       font-family: 'Inter', sans-serif;
       padding: 24px;
       display: flex;
@@ -52,26 +52,26 @@ export function generateSmartChartHTML(
     .header {
       font-size: 24px;
       font-weight: 700;
-      color: #bfff00;
+      color: #3b82f6;
       margin-bottom: 8px;
     }
     .chart-type-badge {
       display: inline-block;
       padding: 4px 12px;
-      background: #141b26;
-      border: 1px solid #2d3748;
+      background: #161b22;
+      border: 1px solid #30363d;
       border-radius: 6px;
       font-size: 11px;
-      color: #8b92a1;
+      color: #8b949e;
       text-transform: uppercase;
       letter-spacing: 0.05em;
       margin-bottom: 16px;
     }
     .card {
-      background: #141b26;
+      background: #161b22;
       border-radius: 12px;
       padding: 24px;
-      border: 1px solid #2d3748;
+      border: 1px solid #30363d;
       flex: 1;
       display: flex;
       flex-direction: column;
@@ -85,14 +85,14 @@ export function generateSmartChartHTML(
     .insight {
       margin-top: 16px;
       padding: 12px;
-      background: #0a0d12;
-      border-left: 3px solid #bfff00;
+      background: #0d1117;
+      border-left: 3px solid #3b82f6;
       border-radius: 4px;
       font-size: 13px;
-      color: #8b92a1;
+      color: #8b949e;
     }
     .insight strong {
-      color: #bfff00;
+      color: #3b82f6;
     }
   </style>
 </head>
@@ -152,17 +152,17 @@ function generateChartJSCode(
         display: ${type === 'pie' ? 'true' : 'false'},
         position: ${type === 'pie' ? "'right'" : "'top'"},
         labels: {
-          color: '#e8ecf1',
+          color: '#e6edf3',
           font: { size: 12 },
           padding: 15,
           usePointStyle: true
         }
       },
       tooltip: {
-        backgroundColor: '#141b26',
-        titleColor: '#bfff00',
-        bodyColor: '#e8ecf1',
-        borderColor: '#2d3748',
+        backgroundColor: '#161b22',
+        titleColor: '#3b82f6',
+        bodyColor: '#e6edf3',
+        borderColor: '#30363d',
         borderWidth: 1,
         padding: 12,
         displayColors: ${type !== 'pie'},
@@ -194,7 +194,7 @@ function generateChartJSCode(
               tension: 0.4,
               fill: true,
               pointBackgroundColor: colors[0],
-              pointBorderColor: '#141b26',
+              pointBorderColor: '#161b22',
               pointBorderWidth: 2,
               pointRadius: 5,
               pointHoverRadius: 7,
@@ -205,9 +205,9 @@ function generateChartJSCode(
             ${baseOptions},
             scales: {
               y: {
-                grid: { color: '#2d3748', drawBorder: false },
+                grid: { color: '#30363d', drawBorder: false },
                 ticks: {
-                  color: '#8b92a1',
+                  color: '#8b949e',
                   font: { size: 11 },
                   callback: function(value) {
                     return value.toLocaleString();
@@ -216,7 +216,7 @@ function generateChartJSCode(
               },
               x: {
                 grid: { display: false },
-                ticks: { color: '#8b92a1', font: { size: 11 } }
+                ticks: { color: '#8b949e', font: { size: 11 } }
               }
             }
           }
@@ -232,7 +232,7 @@ function generateChartJSCode(
             datasets: [{
               data: values,
               backgroundColor: colors.slice(0, values.length),
-              borderColor: '#0a0d12',
+              borderColor: '#0d1117',
               borderWidth: 2,
               hoverOffset: 10,
               hoverBorderWidth: 3
@@ -245,7 +245,7 @@ function generateChartJSCode(
                 display: true,
                 position: 'right',
                 labels: {
-                  color: '#e8ecf1',
+                  color: '#e6edf3',
                   font: { size: 12 },
                   padding: 15,
                   usePointStyle: true,
@@ -266,10 +266,10 @@ function generateChartJSCode(
                 }
               },
               tooltip: {
-                backgroundColor: '#141b26',
-                titleColor: '#bfff00',
-                bodyColor: '#e8ecf1',
-                borderColor: '#2d3748',
+                backgroundColor: '#161b22',
+                titleColor: '#3b82f6',
+                bodyColor: '#e6edf3',
+                borderColor: '#30363d',
                 borderWidth: 1,
                 padding: 12,
                 callbacks: {
@@ -308,21 +308,21 @@ function generateChartJSCode(
                 title: {
                   display: true,
                   text: 'Frequency',
-                  color: '#8b92a1',
+                  color: '#8b949e',
                   font: { size: 12, weight: 600 }
                 },
-                grid: { color: '#2d3748', drawBorder: false },
-                ticks: { color: '#8b92a1', font: { size: 11 } }
+                grid: { color: '#30363d', drawBorder: false },
+                ticks: { color: '#8b949e', font: { size: 11 } }
               },
               x: {
                 title: {
                   display: true,
                   text: 'Range',
-                  color: '#8b92a1',
+                  color: '#8b949e',
                   font: { size: 12, weight: 600 }
                 },
                 grid: { display: false },
-                ticks: { color: '#8b92a1', font: { size: 11 } }
+                ticks: { color: '#8b949e', font: { size: 11 } }
               }
             }
           }
@@ -349,9 +349,9 @@ function generateChartJSCode(
             indexAxis: 'y',
             scales: {
               x: {
-                grid: { color: '#2d3748', drawBorder: false },
+                grid: { color: '#30363d', drawBorder: false },
                 ticks: {
-                  color: '#8b92a1',
+                  color: '#8b949e',
                   font: { size: 11 },
                   callback: function(value) {
                     return value.toLocaleString();
@@ -361,7 +361,7 @@ function generateChartJSCode(
               y: {
                 grid: { display: false },
                 ticks: {
-                  color: '#8b92a1',
+                  color: '#8b949e',
                   font: { size: 11 },
                   autoSkip: false
                 }
@@ -391,9 +391,9 @@ function generateChartJSCode(
             ${baseOptions},
             scales: {
               y: {
-                grid: { color: '#2d3748', drawBorder: false },
+                grid: { color: '#30363d', drawBorder: false },
                 ticks: {
-                  color: '#8b92a1',
+                  color: '#8b949e',
                   font: { size: 11 },
                   callback: function(value) {
                     return value.toLocaleString();
@@ -402,7 +402,7 @@ function generateChartJSCode(
               },
               x: {
                 grid: { display: false },
-                ticks: { color: '#8b92a1', font: { size: 11 } }
+                ticks: { color: '#8b949e', font: { size: 11 } }
               }
             }
           }

@@ -1,14 +1,15 @@
 /**
- * DarkDashboard - BI tool inspired theme dashboard
- * Uses Chart.js and artifact-based rendering with theme support
+ * DarkDashboard - Dashboard view orchestrator
+ * Shows DynamicDashboard (AI-generated) when available, falls back to file overview
  */
 "use client";
 
 import { useEffect, useState } from "react";
 import ArtifactPanel from "./ArtifactPanel";
-import FinancialDashboard from "./FinancialDashboard";
+import DynamicDashboard from "./DynamicDashboard";
 import { useTheme } from "../lib/ThemeContext";
 import { AegisColors } from "../styles/colors";
+import type { DashboardResponse } from "../types";
 
 interface FileSchema {
   file_id: string;
@@ -24,7 +25,7 @@ interface FileSchema {
 
 interface AuditReport {
   file_id: string;
-  filename: string;
+  filename?: string;
   findings: any[];
 }
 
@@ -42,6 +43,7 @@ interface DarkDashboardProps {
   onSwitchFile: (fileId: string) => void;
   customDashboard?: CustomDashboard | null;
   analyticsData?: any;
+  aiDashboard?: DashboardResponse | null;
 }
 
 export default function DarkDashboard({
@@ -50,16 +52,17 @@ export default function DarkDashboard({
   onSwitchFile,
   customDashboard,
   analyticsData,
+  aiDashboard,
 }: DarkDashboardProps) {
   const [dashboardHtml, setDashboardHtml] = useState<string>("");
   const { theme } = useTheme();
   const colors = AegisColors[theme];
 
   useEffect(() => {
-    if (uploadedFiles.length > 0) {
+    if (uploadedFiles.length > 0 && !aiDashboard) {
       setDashboardHtml(generateDashboardHtml(uploadedFiles, auditReports, colors));
     }
-  }, [uploadedFiles, auditReports, theme, colors]);
+  }, [uploadedFiles, auditReports, theme, colors, aiDashboard]);
 
   if (uploadedFiles.length === 0) {
     return (
@@ -93,14 +96,10 @@ export default function DarkDashboard({
     }
   }
 
-  if (analyticsData) {
+  if (aiDashboard) {
     return (
-      <div className="h-full w-full" key="financial-dashboard">
-        <FinancialDashboard
-          kpis={analyticsData.kpis}
-          anomalies={analyticsData.anomalies}
-          chartData={analyticsData.chartData}
-        />
+      <div className="h-full w-full" key="ai-dashboard">
+        <DynamicDashboard dashboard={aiDashboard} />
       </div>
     );
   }
@@ -186,11 +185,6 @@ function generateDashboardHtml(
       border-radius: 12px;
       padding: 20px;
       box-shadow: 0 4px 24px rgba(0,0,0,.15);
-      transition: transform 0.2s, box-shadow 0.2s;
-    }
-    .kpi:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 32px rgba(0,0,0,.25);
     }
     .kpi-label {
       font-size: 12px;
@@ -208,7 +202,6 @@ function generateDashboardHtml(
       font-size: 11px;
       color: ${c.text.secondary};
       margin-top: 8px;
-      line-height: 1.4;
     }
     .card {
       background: ${c.background.card};
@@ -241,16 +234,12 @@ function generateDashboardHtml(
     <div class='kpi'>
       <div class='kpi-label'>Total Records</div>
       <div class='kpi-value'>${totalRecords.toLocaleString()}</div>
-      <div class='kpi-desc'>Total rows across ${files.length} file${
-    files.length !== 1 ? "s" : ""
-  }</div>
+      <div class='kpi-desc'>Total rows across ${files.length} file${files.length !== 1 ? "s" : ""}</div>
     </div>
     <div class='kpi'>
       <div class='kpi-label'>Data Quality</div>
       <div class='kpi-value'>${avgQuality}%</div>
-      <div class='kpi-desc'>${
-        avgQuality >= 95 ? "Excellent" : avgQuality >= 85 ? "Good" : "Needs attention"
-      } - ${totalFindings} issue${totalFindings !== 1 ? "s" : ""} found</div>
+      <div class='kpi-desc'>${avgQuality >= 95 ? "Excellent" : avgQuality >= 85 ? "Good" : "Needs attention"} - ${totalFindings} issue${totalFindings !== 1 ? "s" : ""} found</div>
     </div>
     <div class='kpi'>
       <div class='kpi-label'>Total Columns</div>

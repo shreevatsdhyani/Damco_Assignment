@@ -171,8 +171,8 @@ class SecureCodeExecutor:
         safe_globals = {
             "df": df,
             "pd": pd,
-            "np": np,  # Add numpy
-            "datetime": datetime,  # Add datetime
+            "np": np,
+            "datetime": datetime,
             "timedelta": timedelta,
             "__builtins__": {
                 "len": len,
@@ -185,13 +185,29 @@ class SecureCodeExecutor:
                 "min": min,
                 "max": max,
                 "sum": sum,
-                "print": print,  # Add print for output
+                "print": print,
                 "range": range,
                 "enumerate": enumerate,
                 "list": list,
                 "dict": dict,
                 "set": set,
                 "tuple": tuple,
+                "sorted": sorted,
+                "reversed": reversed,
+                "zip": zip,
+                "map": map,
+                "filter": filter,
+                "any": any,
+                "all": all,
+                "isinstance": isinstance,
+                "type": type,
+                "hasattr": hasattr,
+                "getattr": getattr,
+                "ValueError": ValueError,
+                "TypeError": TypeError,
+                "KeyError": KeyError,
+                "IndexError": IndexError,
+                "Exception": Exception,
             }
         }
 
@@ -223,6 +239,83 @@ class SecureCodeExecutor:
 
             return result_data
 
+        except Exception as e:
+            return {
+                "output": None,
+                "result": None,
+                "error": str(e)
+            }
+        finally:
+            sys.stdout = old_stdout
+            output_buffer.close()
+
+    def execute_multi(self, code: str, dataframes: Dict[str, pd.DataFrame]) -> Any:
+        """Execute code with multiple named DataFrames available"""
+        code = self.strip_imports(code)
+        self.validate_code(code)
+
+        import numpy as np
+        from datetime import datetime, timedelta
+
+        safe_globals = {
+            "pd": pd,
+            "np": np,
+            "datetime": datetime,
+            "timedelta": timedelta,
+            "__builtins__": {
+                "len": len,
+                "str": str,
+                "int": int,
+                "float": float,
+                "bool": bool,
+                "round": round,
+                "abs": abs,
+                "min": min,
+                "max": max,
+                "sum": sum,
+                "print": print,
+                "range": range,
+                "enumerate": enumerate,
+                "list": list,
+                "dict": dict,
+                "set": set,
+                "tuple": tuple,
+                "sorted": sorted,
+                "zip": zip,
+                "map": map,
+                "filter": filter,
+                "any": any,
+                "all": all,
+                "isinstance": isinstance,
+                "type": type,
+                "hasattr": hasattr,
+                "getattr": getattr,
+            }
+        }
+
+        for name, frame in dataframes.items():
+            safe_globals[name] = frame
+        if len(dataframes) == 1:
+            safe_globals["df"] = list(dataframes.values())[0]
+
+        safe_locals: Dict[str, Any] = {}
+
+        import io
+        import sys
+
+        output_buffer = io.StringIO()
+        old_stdout = sys.stdout
+
+        try:
+            sys.stdout = output_buffer
+            exec(code, safe_globals, safe_locals)
+            output = output_buffer.getvalue()
+            result_value = safe_locals.get("RESULT_DATA") or safe_locals.get("result")
+            return {
+                "output": output if output else None,
+                "result": result_value,
+                "error": None
+            }
         except Exception as e:
             return {
                 "output": None,
