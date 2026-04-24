@@ -38,7 +38,7 @@ export default function CommandCenter() {
   const [usedQuestions, setUsedQuestions] = useState<Set<string>>(new Set());
   const [csvDataCache, setCsvDataCache] = useState<Map<string, any[]>>(new Map());
 
-  const [centerView, setCenterView] = useState<"dashboard" | "chat">("dashboard");
+  const [centerView, setCenterView] = useState<"dashboard" | "chat">("chat");
 
   const [briefing, setBriefing] = useState<BriefingResponse | null>(null);
   const [healthScore, setHealthScore] = useState<HealthScoreResponse | null>(null);
@@ -248,7 +248,6 @@ export default function CommandCenter() {
         };
         setDashboardHistory((prev) => [...prev, newDashboard]);
         setCurrentDashboardIndex((prev) => prev + 1);
-        setCenterView("dashboard");
       }
     } catch (err: any) {
       const errorMessage: Message = {

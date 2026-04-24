@@ -18,9 +18,10 @@ interface ConversationHistoryProps {
   loading: boolean;
 }
 
+const spokenMessageIds = new Set<string>();
+
 export default function ConversationHistory({ messages, loading }: ConversationHistoryProps) {
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const lastMessageIdRef = useRef<string>("");
   const [speakingIndex, setSpeakingIndex] = useState<number | null>(null);
   const justTriggeredRef = useRef(false);
   const { isSpeaking, speak, stopSpeaking } = useVoice();
@@ -33,8 +34,8 @@ export default function ConversationHistory({ messages, loading }: ConversationH
     const last = messages[messages.length - 1];
     if (last && last.role === "assistant" && last.content) {
       const id = `${messages.length}-${last.content.substring(0, 50)}`;
-      if (id !== lastMessageIdRef.current) {
-        lastMessageIdRef.current = id;
+      if (!spokenMessageIds.has(id)) {
+        spokenMessageIds.add(id);
         justTriggeredRef.current = true;
         setSpeakingIndex(messages.length - 1);
         speak(last.content);
