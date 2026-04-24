@@ -1,81 +1,164 @@
-# AEGIS - AI Financial Intelligence Dashboard
+<div align="center">
 
-> Voice-powered financial analysis platform with natural language querying, smart chart generation, and real-time speech interaction.
+# AEGIS
 
-![Next.js](https://img.shields.io/badge/Next.js-16.2.4-black) ![FastAPI](https://img.shields.io/badge/FastAPI-Latest-teal) ![Python](https://img.shields.io/badge/Python-3.11+-blue) ![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue)
+### Your Privacy-First AI CFO
 
----
+![Build](https://img.shields.io/badge/build-passing-brightgreen)
+![License](https://img.shields.io/badge/license-MIT-blue)
+![Python](https://img.shields.io/badge/python-3.11+-3776AB?logo=python&logoColor=white)
+![Node](https://img.shields.io/badge/node-20+-339933?logo=node.js&logoColor=white)
+![Next.js](https://img.shields.io/badge/Next.js-16-black?logo=next.js)
+![FastAPI](https://img.shields.io/badge/FastAPI-0.109-009688?logo=fastapi)
 
-## 🚀 Features
-
-### 🧠 AI-Powered Analysis
-- Natural language querying with GPT-4o
-- Context-aware question suggestions
-- Smart chart type selection (bar, line, pie, histogram, horizontal bar)
-- Automatic data insights generation
-
-### 🎤 Voice Interaction
-- Real-time speech-to-text transcription
-- Text-to-speech responses
-- Hands-free operation
-- Auto-submit after 2 seconds of silence
-
-### 📊 Intelligent Visualizations
-- AI-selected chart types based on data patterns
-- Interactive Chart.js dashboards
-- Time series detection
-- Distribution analysis
-- Percentage data recognition
-
-### 💼 Financial Data Support
-- CSV and Excel file upload
-- Multi-file analysis
-- Budget vs Actuals
-- AR Aging Reports
-- Payroll Analysis
-- General Ledger
-- Cash Flow Tracking
+</div>
 
 ---
 
-## 🏗️ Architecture
+## Overview
+
+**Aegis** is a privacy-first AI CFO that lets you upload financial CSVs and Excel files, ask questions through voice or text, run what-if scenarios, and receive dynamic charts and executive briefings — all without your raw data ever leaving your machine. The backend is powered by **FastAPI** and **Pandas**, the frontend by **Next.js 16** and **React 19**, and the AI layer by **Claude on AWS Bedrock**. Only data schemas (column names, types, and aggregate statistics) are sent to the LLM; all generated Pandas code executes locally in an AST-validated sandbox.
+
+---
+
+## Features
+
+- **100% Privacy / Schema-Only Profiling** — Raw rows never reach the LLM. Only column names, data types, and summary statistics are sent to Claude.
+- **Voice Q&A** — Ask financial questions by voice using the Web Speech API; responses are read back via Edge TTS.
+- **Multi-File Upload** — Upload and analyze multiple CSV/XLSX files simultaneously with automatic financial column detection.
+- **Auto-Generated Charts** — AI selects the optimal chart type (bar, line, pie) and renders interactive Recharts visualizations.
+- **Executive Briefing** — One-click time-aware briefing with key metrics, risks, and actionable recommendations.
+- **Financial Health Score** — A 0-100 composite score grading data completeness, consistency, anomaly levels, and coverage.
+- **Automated Audit** — Detects duplicate transactions, statistical outliers (IQR method), missing values, and date inconsistencies.
+- **What-If Scenario Engine** — Describe a hypothetical change in plain English; Aegis computes baseline vs. projected metrics side-by-side.
+- **Smart Suggestions** — Context-aware follow-up questions and scenario ideas generated after each query.
+- **Dark Mode UI** — A cyber-themed interface with a lime-on-dark color palette, fully toggleable.
+
+---
+
+## Architecture
+
+![Aegis Architecture](mermaid-diagram.png)
+
+---
+
+## Request Lifecycles
+
+### 1. Upload Flow
 
 ```
-aegis/
-├── frontend/                 # Next.js 16 (App Router)
-│   ├── app/
-│   │   ├── page.tsx           # Landing page (/)
-│   │   ├── dashboard/         # Main dashboard (/dashboard)
-│   │   ├── components/        # React components
-│   │   ├── lib/              # VoiceContext, utilities
-│   │   └── utils/            # Chart selector, suggestions
-│   ├── public/
-│   └── package.json
-│
-└── backend/                  # FastAPI Python
-    ├── app/
-    │   ├── routers/          # API endpoints
-    │   ├── services/         # Business logic (OpenAI integration)
-    │   ├── models/           # Data schemas
-    │   └── main.py           # FastAPI app
-    ├── uploads/              # User uploaded files (gitignored)
-    ├── requirements.txt
-    └── .env                  # OpenAI API key (not in repo)
+User drops CSV/XLSX
+       |
+       v
+  FileProcessor.parse()          ->  pd.read_csv / pd.read_excel
+       |
+       v
+  SchemaAnalyzer.extract()       ->  Column names, dtypes, nulls,
+       |                             unique counts, first 3 samples,
+       |                             min/max/mean (numeric only)
+       v
+  Auditor.run_audit()            ->  Duplicates, outliers (IQR),
+       |                             missing values, future dates
+       v
+  BriefingGenerator.generate()   ->  Schema sent to Claude ->
+       |                             executive greeting + key metrics
+       v
+  HealthScore.calculate()        ->  Composite 0-100 score:
+       |                             completeness (30%), consistency (25%),
+       |                             anomaly level (30%), coverage (15%)
+       v
+  Response returned              ->  File ID, schema, audit report,
+                                     briefing, health grade
+```
+
+### 2. Query / What-If Flow
+
+```
+User types question or describes scenario
+       |
+       v
+  BedrockClient.generate()       ->  System prompt + schema + question
+       |                             sent to Claude (NO raw data)
+       v
+  Claude returns JSON            ->  {
+       |                                output_type, render_mode,
+       |                                aggregation_code,
+       |                                chat_message, artifact, insight
+       |                              }
+       v
+  SecureCodeExecutor.execute()   ->  1. Strip imports
+       |                             2. AST whitelist validation
+       |                             3. Dangerous-op blacklist check
+       |                             4. Execute in restricted globals
+       |                             (real DataFrame, pd, np, datetime)
+       v
+  Placeholder injection          ->  RESULT_VALUE / RESULT_DATA tokens
+       |                             replaced with actual computed values
+       v
+  Frontend rendering             ->  Chat bubble, Recharts visualization,
+                                     or full artifact HTML panel
 ```
 
 ---
 
-## 📦 Installation
+## Data Handling & Safety
+
+### Schema-Only Profiling
+
+The core privacy guarantee: **raw data rows never leave your machine**. When Aegis communicates with Claude on AWS Bedrock, it sends only a structural profile of each uploaded file:
+
+| Sent to Claude | **NOT** Sent to Claude |
+|---|---|
+| Column names | Individual row values |
+| Data types (int64, object, ...) | Full CSV contents |
+| Non-null / unique counts | Personally identifiable information |
+| Min / max / mean (numeric) | Raw financial transactions |
+| First 3 unique sample values | Complete dataset |
+
+### AST-Validated Sandbox
+
+All LLM-generated Pandas code is executed locally through a multi-layer security pipeline:
+
+1. **Import Stripping** — Every `import` and `from ... import` statement is removed before execution.
+2. **AST Whitelist** — The code is parsed into an Abstract Syntax Tree. Only explicitly allowed node types pass (assignments, loops, comparisons, calls, comprehensions). Function definitions, class definitions, decorators, and `try/except` blocks are rejected.
+3. **Dangerous Operation Blacklist** — Calls to `open`, `eval`, `exec`, `compile`, `__import__`, `system`, `popen`, `subprocess`, `os`, `sys`, `shutil`, `socket`, and file I/O functions are blocked.
+4. **Restricted `__builtins__`** — The execution environment exposes only safe built-in functions (`len`, `str`, `int`, `float`, `round`, `abs`, `range`, `sorted`, etc.). Access to the full `__builtins__` dict is removed.
+5. **Pre-Loaded Globals Only** — The sandbox provides `pd` (pandas), `np` (numpy), `datetime`, `timedelta`, and the user's DataFrame(s). No other modules are accessible.
+6. **Server-Side Artifact Injection** — Chart HTML and artifact content are assembled on the backend and injected into responses; the frontend renders them in isolated containers.
+
+---
+
+## Limits & Defaults
+
+| Parameter | Default | Notes |
+|---|---|---|
+| **Max file size** | 50 MB | Configurable via `MAX_UPLOAD_SIZE_MB` |
+| **Allowed extensions** | `.csv`, `.xlsx`, `.xls` | Configurable via `ALLOWED_EXTENSIONS` |
+| **LLM max tokens** | 4,096 | Per request to Claude |
+| **LLM temperature** | 0.0 (queries) / 0.7 (suggestions) | Deterministic for analysis, creative for ideas |
+| **Dashboard charts** | Exactly 2 | Plus 4-6 KPI cards per generation |
+| **Chart item limit** | Top 10 | Pie/bar charts capped at 10 categories |
+| **Session storage** | In-memory | Files stored on disk in `uploads/`; metadata in memory |
+| **CORS origins** | `http://localhost:3000` | Configurable via `CORS_ORIGINS` |
+| **Multi-file support** | Unlimited | Each file registered as a named DataFrame |
+| **TTS engine** | Edge TTS | Free, no API key required |
+| **Health score weights** | 30 / 25 / 30 / 15 | Completeness, Consistency, Anomalies, Coverage |
+
+---
+
+## Getting Started
 
 ### Prerequisites
-- **Node.js** 18+ (for frontend)
-- **Python** 3.11+ (for backend)
-- **OpenAI API Key** (for GPT-4o) - Get one at https://platform.openai.com/api-keys
 
-### 1. Clone Repository
+- **Python 3.11+** with `pip`
+- **Node.js 20+** with `npm`
+- **AWS Account** with Bedrock access enabled for Claude models
+
+### 1. Clone the Repository
+
 ```bash
-git clone https://github.com/YOUR_USERNAME/aegis-dashboard.git
-cd aegis-dashboard
+git clone https://github.com/your-username/aegis.git
+cd aegis
 ```
 
 ### 2. Backend Setup
@@ -83,26 +166,23 @@ cd aegis-dashboard
 ```bash
 cd backend
 
-# Create virtual environment
+# Create and activate virtual environment
 python -m venv venv
-
-# Activate virtual environment
-# Windows:
-venv\Scripts\activate
-# macOS/Linux:
-source venv/bin/activate
+source venv/bin/activate        # Linux / macOS
+venv\Scripts\activate           # Windows
 
 # Install dependencies
 pip install -r requirements.txt
 
-# Create .env file with your OpenAI API key
-echo "OPENAI_API_KEY=sk-your_actual_key_here" > .env
+# Configure environment
+cp .env.example .env
+# Edit .env with your AWS credentials (see Configuration section below)
 
-# Run backend server
-uvicorn app.main:app --reload --port 8000
+# Start the server
+uvicorn main:app --host 0.0.0.0 --port 8000 --reload
 ```
 
-✅ Backend running at: `http://localhost:8000`
+The API will be available at **http://localhost:8000** with interactive docs at `/docs`.
 
 ### 3. Frontend Setup
 
@@ -112,265 +192,194 @@ cd frontend
 # Install dependencies
 npm install
 
-# Run development server
+# Configure environment
+cp .env.local.example .env.local
+# Edit .env.local if your backend runs on a different host/port
+
+# Start the dev server
 npm run dev
 ```
 
-✅ Frontend running at: `http://localhost:3000`
+The app will be available at **http://localhost:3000**.
 
----
-
-## 🎮 Usage
-
-### 1. Access the Application
-- Navigate to `http://localhost:3000`
-- Click **"Launch Aegis"** on the landing page
-
-### 2. Upload Financial Data
-- Click **"Upload Files"** or drag & drop
-- Supported formats: **CSV, XLSX, XLS**
-- Multiple files can be uploaded simultaneously
-
-### 3. Ask Questions
-
-**Type Mode:**
-- Enter questions in the chat input
-- Press Enter to submit
-
-**Voice Mode:**
-- Click microphone button 🎤
-- Speak your question clearly
-- Stop speaking → auto-submits after 2 seconds
-
-**Example Questions:**
-- "What is the total revenue?"
-- "Show me departments over budget"
-- "Break down spending by category"
-- "Which customers have outstanding invoices?"
-
-### 4. Review Insights
-- AI generates smart charts automatically
-- View interactive dashboards in right panel
-- Click **"Read aloud"** to hear responses
-- Use suggested follow-up questions
-
----
-
-## 🛠️ Tech Stack
-
-### Frontend
-- **Framework**: Next.js 16.2.4 (App Router, Turbopack)
-- **Language**: TypeScript 5.0
-- **Styling**: Tailwind CSS
-- **Charts**: Recharts, Chart.js
-- **Voice**: Web Speech API (native browser)
-- **HTTP Client**: Axios
-- **Icons**: Lucide React
-
-### Backend
-- **Framework**: FastAPI (async)
-- **Language**: Python 3.11+
-- **AI**: OpenAI GPT-4o
-- **Data Processing**: Pandas, NumPy
-- **File Parsing**: openpyxl (Excel), csv
-- **CORS**: FastAPI middleware
-
----
-
-## 🎨 Design System
-
-### Color Palette
-Cyber Military Intelligence Theme inspired by secure government dashboards:
-
-- **Primary (Cyber Lime)**: `#bfff00`
-- **Background (Deep Black)**: `#0a0d12`
-- **Surface (Dark Slate)**: `#141b26`
-- **Border (Steel Blue)**: `#2d3748`
-- **Text (Off-White)**: `#e8ecf1`
-- **Muted (Gray)**: `#8b92a1`
-
-### Typography
-- **Font Family**: Inter (system font stack)
-- **Headings**: Bold, uppercase
-- **Body**: Regular, 14-16px
-- **Monospace**: Consolas (for data)
-
----
-
-## 🔧 Configuration
-
-### Environment Variables
+### 4. Required Environment Variables
 
 **Backend** (`backend/.env`):
+
 ```env
-OPENAI_API_KEY=sk-your_actual_openai_api_key_here
-OPENAI_MODEL=gpt-4o
+# AWS Credentials (required)
+AWS_ACCESS_KEY_ID=your_access_key
+AWS_SECRET_ACCESS_KEY=your_secret_key
+AWS_SESSION_TOKEN=                            # Optional, for temporary credentials
+AWS_REGION=us-east-1
+
+# Model
+BEDROCK_MODEL_ID=us.anthropic.claude-sonnet-4-5-20250929-v1:0
+
+# Server
+PORT=8000
+HOST=0.0.0.0
+DEBUG=True
+CORS_ORIGINS=http://localhost:3000
+
+# Uploads
+MAX_UPLOAD_SIZE_MB=50
+ALLOWED_EXTENSIONS=csv,xlsx,xls
+
+# Security
+SECRET_KEY=change_this_in_production_to_a_secure_random_string
 ```
 
-⚠️ **IMPORTANT**: Never commit `.env` files to Git!
+**Frontend** (`frontend/.env.local`):
 
----
-
-## 📝 API Endpoints
-
-### File Management
-- `POST /files/upload` - Upload CSV/Excel file
-- `GET /files/list` - List all uploaded files
-- `DELETE /files/{file_id}` - Delete specific file
-
-### AI Chat
-- `POST /chat/query` - Send question, receive answer + chart data
-
-### Health Check
-- `GET /health` - Check API status
-- `GET /docs` - Swagger API documentation
-
----
-
-## 🚢 Deployment
-
-### Option 1: Vercel (Frontend) + Render (Backend)
-
-**Frontend (Vercel):**
-```bash
-cd frontend
-npm run build
-vercel deploy --prod
-```
-
-**Backend (Render):**
-1. Create new Web Service
-2. Connect your GitHub repo
-3. Set build command: `pip install -r requirements.txt`
-4. Set start command: `uvicorn app.main:app --host 0.0.0.0 --port $PORT`
-5. Add environment variable: `OPENAI_API_KEY=sk-...`
-
-### Option 2: Docker (Both)
-
-```bash
-# Build and run with Docker Compose
-docker-compose up --build
+```env
+NEXT_PUBLIC_API_URL=http://localhost:8000
+NEXT_PUBLIC_ENABLE_VOICE=true
+NEXT_PUBLIC_ENABLE_CHARTS=true
 ```
 
 ---
 
-## 🧪 Testing
+## Project Structure
 
-### Frontend
-```bash
-cd frontend
-npm run build        # Production build test
-npm run lint         # ESLint check
+```
+aegis/
+|
++-- backend/
+|   +-- main.py                          # FastAPI app entry point, CORS, router mounts
+|   +-- requirements.txt                 # Python dependencies
+|   +-- .env.example                     # Environment variable template
+|   +-- app/
+|       +-- routers/
+|       |   +-- files.py                 # Upload, list, delete, audit endpoints
+|       |   +-- query.py                 # NL query -> Pandas code -> execute pipeline
+|       |   +-- cfo.py                   # Dashboard, briefing, health, scenarios, suggestions
+|       |   +-- tts.py                   # Text-to-speech via Edge TTS
+|       |   +-- health.py               # Liveness + AWS connectivity checks
+|       +-- services/
+|       |   +-- bedrock_client.py        # AWS Bedrock / Claude API integration
+|       |   +-- code_executor.py         # AST-validated sandboxed Pandas execution
+|       |   +-- schema_analyzer.py       # Privacy-first schema extraction (no raw data)
+|       |   +-- file_processor.py        # CSV/Excel parsing + financial column detection
+|       |   +-- auditor.py              # Duplicate, outlier, missing data, date checks
+|       |   +-- briefing_generator.py    # Executive briefing generation
+|       |   +-- health_score.py          # Composite 0-100 financial health scoring
+|       |   +-- tts_service.py           # Edge TTS wrapper
+|       +-- models/
+|       |   +-- schemas.py               # Pydantic request/response models
+|       +-- utils/
+|           +-- validators.py            # Input validation helpers
+|
++-- frontend/
+|   +-- package.json                     # Dependencies (Next.js 16, React 19, Recharts)
+|   +-- next.config.ts                   # Next.js configuration
+|   +-- .env.local.example               # Frontend env template
+|   +-- app/
+|       +-- layout.tsx                   # Root layout with theme + voice providers
+|       +-- page.tsx                     # Landing page / upload gate
+|       +-- globals.css                  # Tailwind CSS + global styles
+|       +-- dashboard/
+|       |   +-- page.tsx                 # Main financial dashboard
+|       +-- components/
+|       |   +-- ChatInterface.tsx        # Chat message display + input
+|       |   +-- EnhancedChat.tsx         # Extended chat with suggestions + scenarios
+|       |   +-- FileUploader.tsx         # Drag-and-drop file upload
+|       |   +-- VoiceCommandBar.tsx      # Speech recognition input bar
+|       |   +-- ExecutiveDashboard.tsx   # KPI cards + chart grid
+|       |   +-- ConsolidatedDashboard.tsx  # Unified multi-panel dashboard
+|       |   +-- BriefingPanel.tsx        # Executive briefing display
+|       |   +-- AuditPanel.tsx           # Audit findings table
+|       |   +-- RiskPanel.tsx            # Risk assessment display
+|       |   +-- ScenarioModal.tsx        # What-if scenario input + results
+|       |   +-- ArtifactPanel.tsx        # HTML artifact renderer
+|       |   +-- HealthScoreBadge.tsx     # Health score gauge (A-F)
+|       |   +-- ThemeToggle.tsx          # Dark / light mode switch
+|       +-- hooks/
+|       |   +-- useChat.ts              # Chat state management
+|       |   +-- useFileUpload.ts        # Upload state + API calls
+|       |   +-- useSpeechRecognition.ts # Browser speech API hook
+|       +-- lib/
+|       |   +-- api.ts                  # Axios client with all API methods
+|       |   +-- VoiceContext.tsx         # Voice state provider
+|       |   +-- ThemeContext.tsx         # Theme state provider
+|       +-- utils/
+|       |   +-- smartChartSelector.ts   # AI chart type selection logic
+|       |   +-- enhancedChartHTML.ts    # Chart HTML generation
+|       |   +-- csvAnalytics.ts        # Client-side CSV analysis
+|       |   +-- questionSuggestions.ts  # Follow-up question generation
+|       +-- types/
+|       |   +-- index.ts               # TypeScript interfaces
+|       +-- styles/
+|           +-- colors.ts              # Design system (cyber lime palette)
+|
++-- README.md
 ```
 
-### Backend
-```bash
-cd backend
-pytest tests/        # Run unit tests
-```
+---
+
+## Configuration
+
+### All Environment Variables
+
+| Variable | Location | Default | Description |
+|---|---|---|---|
+| `AWS_ACCESS_KEY_ID` | Backend | *required* | AWS IAM access key for Bedrock |
+| `AWS_SECRET_ACCESS_KEY` | Backend | *required* | AWS IAM secret key |
+| `AWS_SESSION_TOKEN` | Backend | *(optional)* | Temporary session token |
+| `AWS_REGION` | Backend | `us-east-1` | AWS region for Bedrock |
+| `BEDROCK_MODEL_ID` | Backend | `us.anthropic.claude-sonnet-4-5-20250929-v1:0` | Claude model identifier |
+| `PORT` | Backend | `8000` | Server port |
+| `HOST` | Backend | `0.0.0.0` | Bind address |
+| `DEBUG` | Backend | `True` | Enable debug mode |
+| `CORS_ORIGINS` | Backend | `http://localhost:3000` | Allowed CORS origins |
+| `MAX_UPLOAD_SIZE_MB` | Backend | `50` | Max upload file size in MB |
+| `ALLOWED_EXTENSIONS` | Backend | `csv,xlsx,xls` | Comma-separated allowed types |
+| `SECRET_KEY` | Backend | *required* | Application secret key |
+| `NEXT_PUBLIC_API_URL` | Frontend | `http://localhost:8000` | Backend API base URL |
+| `NEXT_PUBLIC_ENABLE_VOICE` | Frontend | `true` | Enable voice input/output |
+| `NEXT_PUBLIC_ENABLE_CHARTS` | Frontend | `true` | Enable chart rendering |
+
+### Tunable Limits
+
+These values are defined in the source code and can be adjusted by editing the respective files:
+
+| Limit | Value | File |
+|---|---|---|
+| LLM max tokens | 4,096 | `backend/app/services/bedrock_client.py` |
+| LLM temperature (queries) | 0.0 | `backend/app/routers/query.py` |
+| LLM temperature (suggestions) | 0.7 | `backend/app/routers/cfo.py` |
+| Dashboard KPIs | 4-6 | `backend/app/routers/cfo.py` |
+| Dashboard charts | 2 | `backend/app/routers/cfo.py` |
+| Chart category limit | Top 10 | System prompt |
+| Health score weights | 30 / 25 / 30 / 15 | `backend/app/services/health_score.py` |
+| Outlier IQR multiplier | 3.0 | `backend/app/services/auditor.py` |
+| Schema sample values | 3 | `backend/app/services/schema_analyzer.py` |
 
 ---
 
-## 📚 Key Features Explained
+## Contributing
 
-### 1. Smart Chart Selection Algorithm
-The system automatically selects optimal chart types using pattern detection:
+Contributions are welcome! To get started:
 
-- **Line Chart**: Time series data, trends, forecasts
-- **Bar Chart**: Category comparisons, discrete values
-- **Pie Chart**: Proportions, percentages (≤ 8 segments)
-- **Histogram**: Distributions, frequency analysis
-- **Horizontal Bar**: Long category labels, rankings
+1. **Fork** the repository.
+2. **Create a feature branch**: `git checkout -b feature/your-feature`
+3. **Make your changes** and ensure the backend and frontend both run without errors.
+4. **Commit** with a descriptive message: `git commit -m "Add your feature"`
+5. **Push** to your fork: `git push origin feature/your-feature`
+6. **Open a Pull Request** against `main`.
 
-### 2. Real-Time Speech Recognition
-- Uses Web Speech API (native browser)
-- Displays interim results as you speak
-- Prevents text duplication with `lastResultIndex` tracking
-- Auto-submits after 2 seconds of silence
-- Works in Chrome, Edge, Safari (not Firefox)
-
-### 3. Question Suggestion Engine
-- **Initial suggestions**: Based on uploaded file schemas
-- **Follow-up suggestions**: Based on conversation context
-- **Cross-domain suggestions**: Diverse question paths
-- **Similarity filtering**: Avoids repetitive suggestions
+Please keep PRs focused on a single concern. For large changes, open an issue first to discuss the approach.
 
 ---
 
-## 🐛 Troubleshooting
+## License
 
-### Speech Recognition Not Working
-**Issue**: Microphone button doesn't activate
-**Solutions**:
-- Use Chrome, Edge, or Safari (Firefox unsupported)
-- Check browser microphone permissions
-- Ensure HTTPS (required for production)
-
-### Backend Connection Errors
-**Issue**: Frontend can't reach backend
-**Solutions**:
-- Verify backend is running on port 8000
-- Check CORS settings in `backend/app/main.py`
-- Ensure frontend API URL is correct
-
-### OpenAI API Errors
-**Issue**: "Invalid API key" or rate limit errors
-**Solutions**:
-- Verify API key in `backend/.env`
-- Check OpenAI account has credits
-- Confirm model `gpt-4o` is accessible
-
-### File Upload Fails
-**Issue**: Upload returns error
-**Solutions**:
-- Check file size (limit: 10MB)
-- Ensure format is CSV, XLSX, or XLS
-- Verify `backend/uploads/` folder exists
-- Check file has valid column headers
+This project is licensed under the **MIT License**. See [LICENSE](LICENSE) for details.
 
 ---
 
-## 🤝 Contributing
+<div align="center">
 
-Contributions are welcome! Please follow these steps:
+**Built by [Shreevats Dhyani](https://github.com/ShreevatsDhyani)**
 
-1. Fork the repository
-2. Create feature branch: `git checkout -b feature/amazing-feature`
-3. Commit changes: `git commit -m 'Add amazing feature'`
-4. Push to branch: `git push origin feature/amazing-feature`
-5. Open Pull Request
-
----
-
-## 📄 License
-
-This project is licensed under the **MIT License**.
-
----
-
-## 👨‍💻 Author
-
-**Shreevats Dhyani**
-
----
-
-## 🙏 Acknowledgments
-
-- OpenAI for GPT-4o capabilities
-- Next.js team for excellent framework
-- FastAPI for blazing-fast Python backend
-- Chart.js & Recharts for beautiful visualizations
-- Web Speech API for native browser voice support
-
----
-
-## 📞 Support
-
-For issues, questions, or feature requests:
-- 🐛 Open an issue on GitHub
-- 📧 Email: [your-email@example.com]
-- 💬 Discussion forum: GitHub Discussions
-
----
-
-**Built with 💚 using Claude Code**
+</div>
