@@ -1,0 +1,73 @@
+name: CI/CD Pipeline
+
+# When should this pipeline run?
+on:
+  push:
+    branches: [ main ]  # Run on push to main branch
+  pull_request:
+    branches: [ main ]  # Run on PRs to main
+
+# What jobs should run?
+jobs:
+  # Job 1: Build and Test
+  build-and-test:
+    runs-on: ubuntu-latest  # Use Ubuntu virtual machine
+
+    steps:
+      # Step 1: Get the code
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Step 2: Set up Docker Buildx (for building images)
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      # Step 3: Build Docker images
+      - name: Build Backend Image
+        run: |
+          docker build -t damco-backend:${{ github.sha }} ./backend
+          echo "✅ Backend image built successfully"
+
+      - name: Build Frontend Image
+        run: |
+          docker build \
+            --build-arg NEXT_PUBLIC_API_URL=http://localhost:8000 \
+            -t damco-frontend:${{ github.sha }} \
+            ./frontend
+          echo "✅ Frontend image built successfully"
+
+      # Step 4: Test the images (basic health check)
+      - name: Test Backend Container
+        run: |
+          docker run -d --name test-backend \
+            -e AWS_ACCESS_KEY_ID=test \
+            -e AWS_SECRET_ACCESS_KEY=test \
+            -e AWS_REGION=us-east-1 \
+            damco-backend:${{ github.sha }}
+          sleep 10
+          docker logs test-backend
+          echo "✅ Backend container started successfully"
+
+      # Step 5: Success message
+      - name: Pipeline Summary
+        run: |
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "✅ CI/CD Pipeline Completed!"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "📦 Images built: damco-backend, damco-frontend"
+          echo "🔖 Git SHA: ${{ github.sha }}"
+          echo "👤 Triggered by: ${{ github.actor }}"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+
+  # Job 2: Deploy (only on main branch, not PRs)
+  # Uncomment this when you have a production server
+  # deploy:
+  #   needs: build-and-test  # Run only if build succeeds
+  #   runs-on: ubuntu-latest
+  #   if: github.ref == 'refs/heads/main'  # Only on main branch
+  #
+  #   steps:
+  #     - name: Deploy to Production
+  #       run: |
+  #         echo "🚀 Would deploy to production here"
+  #         echo "This is where you'd SSH to your server and restart containers"

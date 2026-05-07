@@ -1,0 +1,53 @@
+version: '3.8'
+
+services:
+  # Backend Service (FastAPI)
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: aegis-backend
+    ports:
+      - "8000:8000"
+    environment:
+      # Add your environment variables here
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+      - AWS_SESSION_TOKEN=${AWS_SESSION_TOKEN}
+      - AWS_REGION=${AWS_REGION}
+      - BEDROCK_MODEL_ID=${BEDROCK_MODEL_ID}
+      - CORS_ORIGINS=http://localhost:3000
+    volumes:
+      # Mount code for hot-reload during development
+      - ./backend:/app
+    restart: unless-stopped
+    networks:
+      - aegis-network
+
+  # Frontend Service (Next.js)
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        - NEXT_PUBLIC_API_URL=http://localhost:8000
+    container_name: aegis-frontend
+    ports:
+      - "3000:3000"
+    environment:
+      - NEXT_PUBLIC_API_URL=http://localhost:8000
+    volumes:
+      # Mount code for hot-reload during development
+      - ./frontend:/app
+      - /app/node_modules
+      - /app/.next
+    depends_on:
+      - backend
+    restart: unless-stopped
+    networks:
+      - aegis-network
+
+# Define network for services to communicate
+networks:
+  aegis-network:
+    driver: bridge

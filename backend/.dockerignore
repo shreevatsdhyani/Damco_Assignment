@@ -1,0 +1,31 @@
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+
+# Virtual environments
+venv/
+env/
+ENV/
+
+# IDE
+.vscode/
+.idea/
+
+# Environment variables (don't copy .env to Docker image for security)
+.env
+
+# Temporary files
+temp/
+*.log
+
+# Git
+.git/
+.gitignore
+
+# Testing
+.pytest_cache/
+htmlcov/
+.coverage

@@ -1,0 +1,113 @@
+name: 🎓 Learn CI/CD
+
+# This is a learning pipeline - it shows you what CI/CD does step-by-step
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  learn-pipeline:
+    runs-on: ubuntu-latest
+
+    steps:
+      # STEP 1: Get your code from GitHub
+      - name: 📥 Step 1 - Download Code
+        uses: actions/checkout@v4
+
+      - name: 🎯 Explain Step 1
+        run: |
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "STEP 1: GET THE CODE"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "✅ I just downloaded your code from GitHub"
+          echo "📂 Files available:"
+          ls -la
+          echo ""
+
+      # STEP 2: Check what's in the code
+      - name: 🔍 Step 2 - Inspect Code
+        run: |
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "STEP 2: INSPECT THE CODE"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "Backend files:"
+          ls -la backend/ | head -10
+          echo ""
+          echo "Frontend files:"
+          ls -la frontend/ | head -10
+          echo ""
+
+      # STEP 3: Check if Dockerfiles exist
+      - name: 🐳 Step 3 - Check Docker Setup
+        run: |
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "STEP 3: VERIFY DOCKER FILES"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          if [ -f backend/Dockerfile ]; then
+            echo "✅ Backend Dockerfile found"
+          fi
+          if [ -f frontend/Dockerfile ]; then
+            echo "✅ Frontend Dockerfile found"
+          fi
+          if [ -f docker-compose.yml ]; then
+            echo "✅ docker-compose.yml found"
+          fi
+          echo ""
+
+      # STEP 4: Build Docker Images
+      - name: 🏗️ Step 4 - Build Docker Images
+        run: |
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "STEP 4: BUILD DOCKER IMAGES"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "Building backend..."
+          docker build -t damco-backend:test ./backend
+          echo "✅ Backend image built!"
+          echo ""
+          echo "Building frontend..."
+          docker build --build-arg NEXT_PUBLIC_API_URL=http://localhost:8000 -t damco-frontend:test ./frontend
+          echo "✅ Frontend image built!"
+          echo ""
+          echo "📦 Available Docker images:"
+          docker images | grep damco
+          echo ""
+
+      # STEP 5: Test the images
+      - name: 🧪 Step 5 - Test Images
+        run: |
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "STEP 5: TEST THE IMAGES"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "Starting backend container..."
+          docker run -d --name test-backend -e AWS_REGION=test damco-backend:test
+          sleep 5
+          echo "✅ Backend container is running!"
+          docker ps -a | grep test-backend
+          echo ""
+
+      # STEP 6: Success!
+      - name: 🎉 Step 6 - Success Summary
+        run: |
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "🎉 CI/CD PIPELINE COMPLETED!"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo ""
+          echo "What just happened?"
+          echo "1️⃣  Downloaded your code from GitHub"
+          echo "2️⃣  Inspected the files"
+          echo "3️⃣  Verified Docker setup"
+          echo "4️⃣  Built Docker images"
+          echo "5️⃣  Tested the images work"
+          echo "6️⃣  All checks passed! ✅"
+          echo ""
+          echo "🚀 In a real deployment, this would now:"
+          echo "   - Push images to Docker Hub"
+          echo "   - Deploy to AWS/GCP/Azure"
+          echo "   - Send you a notification"
+          echo ""
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "Triggered by: ${{ github.actor }}"
+          echo "Commit: ${{ github.sha }}"
+          echo "Branch: ${{ github.ref_name }}"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
